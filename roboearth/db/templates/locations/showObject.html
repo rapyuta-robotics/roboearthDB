@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Search Result - RoboEarth</title>
+  </head>
+
+  <body>
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">      
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      <h1>Search Results for "{{ Query }}"</h1>
+
+      {% if Objects %}
+
+      {% for obj in Objects %}
+
+      <p>
+	Object: <a href="{{Domain}}objects/result?query={{obj.object}}&format=html">{{ obj.object }}</a><br/>
+	Author: <b>{{ obj.author }}</b><br />
+        {% if is_auth %}
+	<form action="/deleteEntity" method="post">
+          <input name="table" type="hidden" value="ObjectLocations">
+          <input name="rowKey" type="hidden" value="{{ obj.id }}">
+          <input type="submit" value="Delete object location '{{obj.id}}'">
+	</form>
+        {% endif %}
+	Environment: <a href="{{Domain}}environment/result?query={{obj.environment}}&format=html">{{ obj.environment }}</a><br />
+        Room: {{obj.room_number}}<br />
+	Position: x={{obj.posX}}; y={{obj.posY}}; z={{obj.posZ}}; radius={{obj.delta}}
+      </p>
+
+      <br /><br /><br />
+
+      {% endfor %}
+
+      {% else %}
+      <p class="center"><b>No search results!</b></p>
+      {% endif %}
+    </div>
+  </body>
+</html>

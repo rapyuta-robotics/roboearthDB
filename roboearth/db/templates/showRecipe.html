@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Search Results - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+      
+      {% if Semantic %}
+      <h1>Search Results</h1>
+      {% else %}
+      <h1>Search Results for "{{ Query }}"</h1>
+      {% endif %}
+      
+      {% if Recipes %}
+      
+      {% for recipe in Recipes %}
+      <p>
+        <table>
+          <tr><td>ID: <b class="id">{{ recipe.id }}</b></td>
+	  <td>
+            {% if is_auth %}
+            {% if recipe.subscribed %}
+            <form action="/unsubscribe" method="post">{% csrf_token %}
+              <input name="table" type="hidden" value="Recipes">
+              <input name="rowKey" type="hidden" value="{{ recipe.id }}">
+              <input name="author" type="hidden" value="{{ recipe.author }}">
+              <input type="submit" value="Unsubscribe">
+            </form>
+            {% else %}
+            <form action="/subscribe" method="post">{% csrf_token %}
+              <input name="table" type="hidden" value="Recipes">
+              <input name="rowKey" type="hidden" value="{{ recipe.id }}">
+              <input name="author" type="hidden" value="{{ recipe.author }}">
+              <input type="submit" value="Subscribe">
+	    </form>
+            {% endif %}
+            {% endif %}
+        </td></tr></table>
+          Author: {{ recipe.author }}<br /><br />
+          {% if recipe.modified_by %}
+          Last modification by: {{ recipe.modified_by }}<br />
+          {% endif %}
+          <table border="0" cellspacing="0">
+            <tr><td>Rating:</td><td>
+                {% for i in recipe.fullStars %}<img src="/img/rating1.png" />{% endfor %}
+                {% for i in recipe.emptyStars %}<img src="/img/rating0.png" />{% endfor %}
+          </td></tr></table>
+          {% if is_auth %}
+	  <form action="/deleteEntity" method="post">{% csrf_token %}
+            <input name="table" type="hidden" value="Recipes">
+            <input name="rowKey" type="hidden" value="{{ recipe.id }}">
+            <input name="author" type="hidden" value="{{ recipe.author }}">
+            <input type="submit" value="Delete &raquo;{{ recipe.id }}&laquo;">
+	  </form>
+        {% endif %}
+	<form action="/recipes/update" method="post" class="commitForm">{% csrf_token %}
+          <input name="id" type="hidden" value="{{ recipe.id }}">
+          <table border="0" cellspacing="20">
+            <tr><td>Description:</td><td><textarea name="description" rows="3"
+            cols="60">{{ recipe.description }}</textarea></td></tr>
+            {% for rec in recipe.recipes %}
+            <tr><td>Timestamp:</td><td>{{ rec.timestamp }}</td></tr>
+            <tr><td>Recipe:</td><td><textarea name="recipe" rows="30"
+            cols="60" {% if forloop.counter != 1 %}readonly{% endif %}>{{ rec.recipe }}</textarea><br/>(OWL
+            description)</td></tr>
+            {% if forloop.counter == 1 %}
+            <tr><td></td><td><input type="submit" value="Update" /></td></tr>
+            {% endif %}
+            {% endfor %}
+          </table>
+	</form>
+      </p>
+      {% endfor %}
+      <br /><br /><br />
+
+      {% else %}
+      <p class="center"><b>No search results!</b></p>
+      {% endif %}
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>

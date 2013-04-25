@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>User Management - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      <h1>User Management</h1>
+
+      <table border="1" frame="box"  rules="all" cellpadding="5">
+        <tr>
+          <th nowrap>Username</th>
+          <th nowrap>First Name</th>
+          <th nowrap>Last Name</th>
+          <th nowrap>E-Mail</th>
+          <th nowrap>Activate</th>
+          <th nowrap>Deactivate</th>
+          <th nowrap>Delete</th>
+        </tr>
+      {% for user in Users %}
+        {% if user.is_superuser %}
+        <tr>
+          <td nowrap>{{user.username}} (Super User)</td>
+          <td></td>
+          <td></td>
+          <td nowrap>{{user.email}}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        {% else %}
+        <tr>
+          <td nowrap>{{user.username}}</td>
+          <td nowrap>{{user.first_name}}</td>
+          <td nowrap>{{user.last_name}}</td>
+          <td nowrap>{{user.email}}</td>
+          {% if user.is_active %}
+            <td></td>
+            <td nowrap>
+              <form action="/accounts/deactivate" method="post">{% csrf_token %}
+                <input name="username" type="hidden" value={{user.username}}>
+                <input type="submit" value="Deactivate">
+	      </form>
+            </td>
+          {% else %}  
+            <td nowrap>
+              <form action="/accounts/activate" method="post">{% csrf_token %}
+                <input name="username" type="hidden" value={{user.username}}>
+                <input name="email" type="hidden" value="{{ user.email }}">
+                <input type="submit" value="Activate">
+	      </form>
+            </td>
+            <td></td>
+          {% endif %}
+          <td nowrap>
+            <form action="/accounts/delete" method="post">{% csrf_token %}
+              <input name="username" type="hidden" value={{user.username}}>
+              <input type="submit" value="Delete">
+	    </form>
+          </td>  
+        {% endif %}
+      {% endfor %}
+      </table> 
+
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>

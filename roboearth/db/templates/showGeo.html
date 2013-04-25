@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    
+    <!--Google Maps -->
+
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAbW0iLNw0DuCGgrw6lKSdChQuTC51lJ6xsJwl5o61Hk2xz_hUYxRMYTZZTPW4UxisLb9KEKHzM38hrA&sensor=false" type="text/javascript"></script>
+    <script type="text/javascript">
+
+      {% for data in geoData %}
+
+      function initialize_{{data.key}}() {
+        if (GBrowserIsCompatible()) {
+          var map = new GMap2(document.getElementById("googlemap_{{data.key}}"));
+          var point = new GLatLng( {{data.lat}}, {{data.lng}} )
+          map.setCenter(point, 13);
+          var marker = new GMarker(point);
+          map.addOverlay(marker);
+          map.setUIToDefault();
+        }
+      }
+      {% endfor %}
+
+    </script>
+
+    <!-- Open Streetmap -->
+
+    <!-- bring in the OpenLayers javascript library
+         (here we bring it from the remote site, but you could
+	  easily serve up this javascript yourself) -->
+    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+ 
+    <!-- bring in the OpenStreetMap OpenLayers layers.
+	 Using this hosted file will make sure we are kept up
+	 to date with any necessary changes -->
+    <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
+ 
+    <script type="text/javascript">
+		//Initialise the 'map' object
+
+                {% for data in geoData %}
+
+                function init_{{data.key}}() {
+		        var lat={{data.lat}};
+		        var lon={{data.lng}};
+         		var zoom=13;
+ 
+		        var map; //complex object of type OpenLayers.Map
+
+			map = new OpenLayers.Map ("osm_{{data.key}}", {
+				controls:[
+					new OpenLayers.Control.Navigation(),
+					new OpenLayers.Control.PanZoomBar(),
+					new OpenLayers.Control.LayerSwitcher(),
+					new OpenLayers.Control.Attribution()],
+				maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
+				maxResolution: 156543.0399,
+				numZoomLevels: 19,
+				units: 'm',
+				projection: new OpenLayers.Projection("EPSG:900913"),
+				displayProjection: new OpenLayers.Projection("EPSG:4326")
+			} );
+ 
+ 			layerMapnik = new OpenLayers.Layer.OSM.Mapnik("Mapnik");
+			map.addLayer(layerMapnik);
+			layerTilesAtHome = new OpenLayers.Layer.OSM.Osmarender("Osmarender");
+			map.addLayer(layerTilesAtHome);
+			layerCycleMap = new OpenLayers.Layer.OSM.CycleMap("CycleMap");
+			map.addLayer(layerCycleMap);
+			layerMarkers = new OpenLayers.Layer.Markers("Markers");
+			map.addLayer(layerMarkers);
+ 
+			var lonLat = new OpenLayers.LonLat(lon, lat).transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+			map.setCenter (lonLat, zoom);
+ 
+			var size = new OpenLayers.Size(21,25);
+			var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+			var icon = new OpenLayers.Icon('http://www.openstreetmap.org/openlayers/img/marker.png',size,offset);
+                        var marker = new OpenLayers.Marker(lonLat,icon)
+			layerMarkers.addMarker(marker);
+
+		}
+
+                {% endfor %}
+    </script>
+    <title>Search Results - RoboEarth</title>
+  </head>
+
+  <body onload="{% for data in geoData %} initialize_{{data.key}}(); init_{{data.key}}(); {% endfor %}" onunload="GUnload()">  
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu }}
+    </div>
+    
+    <div id="content">
+
+      <h1>Search Results</h1>
+
+      {% if geoData %}
+      
+      {% for data in geoData %}
+      <p>
+	Latitude: <b class="latitude">{{ data.lat }}</b><br />
+	Longitude: <b class="longitude">{{ data.lng }}</b><br />
+	Information:
+	<ul>
+	  {% for info in data.infos %}
+          <li class="geographicalInformation">{{ info }}</li>
+	  {% endfor %}
+	</ul>
+      </p>
+      <form action="/deleteEntity" method="post">
+	<input name="type" type="hidden" value="geoPoints">
+	<input name="key" type="hidden" value="{{ data.key }}">
+	<input type="submit" value="Delete">
+      </form>
+      <p>
+	Robots:
+        {% if data.robots %}
+        <ul>
+	  {% for robot in data.robots %}
+          <li><a href="requestRobot?query={{robot}}&format=html">{{robot}}</a></li>
+	  {% endfor %}
+        </ul>
+        {% else %}
+        <b>no robots in this area</b><br />
+        {% endif %}
+      </p>
+      <p>
+	Environment Maps: <br />
+        {% if data.environments %}
+	  {% for environment in data.environments %}
+             <img src="img?img_id={{ environment }}" /><br />
+	     <form action="/deleteEntity" method="post">
+	       <input name="type" type="hidden" value="environments">
+	       <input name="key" type="hidden" value="{{ environment }}">
+	       <input type="submit" value="Delete Map">
+	     </form>
+	  {% endfor %}
+        {% else %}
+        <b>no environment map available</b><br />
+        {% endif %}
+      </p>
+      Location:
+      <table border="0">
+	<tr>
+          <th>Google Maps</th>
+          <th>Open Streetmap</th>
+	<tr>
+          <td><div id="googlemap_{{data.key}}" style="width: 500px; height: 350px"></div></td>
+          <td><div  id="osm_{{data.key}}" style="width:500px; height:350px"></div></td>
+	</tr>
+      </table>
+
+      {% endfor %}
+
+      {% else %}
+      <p class="center"><b>No search results!</b></p>
+      {% endif %}
+
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>
+        

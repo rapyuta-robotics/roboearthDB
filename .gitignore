@@ -1,0 +1,6 @@
+.project
+.pydevproject
+*.pyc
+.settings/*
+roboearth/user.db
+roboearth/html/*

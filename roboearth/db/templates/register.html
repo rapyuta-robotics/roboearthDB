@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Create new Account - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      <h1>Create new Account</h1>
+      
+      {% if error %}
+      <p class="error">Sorry, user already exists</p>
+      {% endif %}
+
+      <p>
+	<form action="/accounts/create/" method="post" class="commitForm">{% csrf_token %}
+          <table border="0" cellspacing="20">
+            <tr><td>First Name:</td><td><td><input name="firstname" type="text" size="30"></td></tr>
+            <tr><td>Last Name:</td><td><td><input name="lastname" type="text" size="30"></td></tr>
+            <tr><td>Username:</td><td><td><input name="username" type="text" size="30"></td></tr>
+            <tr><td>E-Mail:</td><td><td><input name="email" type="text" size="30"></td></tr>
+            <tr><td>Password:</td><td><td><input name="password" type="password" size="30"></td></tr>
+          </table>
+          <input type="submit" value="Register" />
+	</form>
+      </p>
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>

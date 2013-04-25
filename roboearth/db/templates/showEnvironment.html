@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Search Results - RoboEarth</title>
+  </head>
+
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">      
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      {% if Semantic %}
+      <h1>Search Results</h1>
+      {% else %}
+      <h1>Search Results for "{{ Query }}"</h1>
+      {% endif %}
+
+      {% if Environments %}
+
+      {% for env in Environments %}
+
+      <p>
+        <table>
+	<tr><td>ID: <b>{{ env.id }}</b></td>
+          <td>
+            {% if is_auth %}
+            {% if env.subscribed %}
+            <form action="/unsubscribe" method="post">{% csrf_token %}
+              <input name="table" type="hidden" value="Environments">
+              <input name="rowKey" type="hidden" value="{{ env.id }}">
+              <input name="author" type="hidden" value="{{ env.author }}">
+              <input type="submit" value="Unsubscribe">
+	    </form>
+            {% else %}
+            <form action="/subscribe" method="post">{% csrf_token %}
+              <input name="table" type="hidden" value="Environments">
+              <input name="rowKey" type="hidden" value="{{ env.id }}">
+              <input name="author" type="hidden" value="{{ env.author }}">
+              <input type="submit" value="Subscribe">
+	    </form>
+            {% endif %}
+            {% endif %}
+        </td></tr></table>
+	Author: {{ env.author }}<br /><br />
+        {% if env.modified_by %}
+        Last modification by: {{ env.modified_by }}<br />
+        {% endif %}
+
+        <table border="0" cellspacing="0">
+          <tr><td>Rating:</td><td>
+              {% for i in env.fullStars %}<img src="/img/rating1.png" />{% endfor %}
+              {% for i in env.emptyStars %}<img src="/img/rating0.png" />{% endfor %}
+        </td></tr></table>
+        {% if is_auth %}
+	<form action="/deleteEntity" method="post">{% csrf_token %}
+          <input name="table" type="hidden" value="Environments">
+          <input name="rowKey" type="hidden" value="{{ env.id }}">
+          <input name="author" type="hidden" value="{{ env.author }}">
+          <input type="submit" value="Delete &raquo;{{ env.id }}&laquo;">
+	</form>
+        {% endif %}
+	<form action="/environments/update" method="post" class="commitForm">{% csrf_token %}
+          <input name="id" type="hidden" value="{{ env.id }}">
+          <table border="0" cellspacing="20">
+            {% if env.location %}
+            <tr><td>Latitude/Longitude: </td><td>{{env.location.latitude}} / {{env.location.longitude}}</td></tr>
+            <tr><td>Map:</td><td>
+                {{ env.location.html|safe }}
+            </td></tr>
+            {% endif %}
+            <tr><td>Description:</td><td><textarea name="description" rows="3"
+            cols="60">{{ env.description }}</textarea></td></tr>
+            {% for e in env.environments %}
+            <tr><td>Timestamp:</td><td>{{ e.timestamp }}</td></tr>
+            <tr><td>Environment:</td><td><textarea name="environment" rows="30"
+            cols="60" {% if forloop.counter != 1 %}readonly{% endif %}>{{ e.environment }}</textarea><br/>(OWL
+            description)</td></tr>
+            {% if forloop.counter == 1 %}
+            <tr><td></td><td><input type="submit" value="Update" /></td></tr>
+            {% endif %}
+            {% endfor %}
+          </table>
+	</form>
+      </p>
+      <br /><br /><br />
+
+      {% endfor %}
+
+      {% else %}
+      <p class="center"><b>No search results!</b></p>
+      {% endif %}
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>

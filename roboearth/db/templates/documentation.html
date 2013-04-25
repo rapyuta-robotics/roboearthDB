@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Web Interface - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      <h1>Documentation</h1>
+
+      This is a short description of the REST-style API version 0.1.  You need
+      an RoboEarth <a href="/register">Account</a> to use the API, except for
+      Downloading existing data.
+
+      <h3>Content:</h3>
+
+      <ul>
+        <li><a href="#Download">Download</a></li>
+        <li><a href="#Upload">Upload</a></li>
+        <li><a href="#Update">Update</a></li>
+        <li><a href="#Delete">Delete</a></li>
+      </ul>
+
+      <a name="Download"></a>
+      <h3>Download</h3>
+
+      <p>Using the unified identifier (UID) (see table <a href="#JSONData">data
+      fields</a>) is the easiest way to access the data. Therefore a
+      "GET"-request has to be send to the corresponding URL:
+      </p>
+
+      <table border="1" frame="box"  rules="all" cellpadding="5">
+	<caption align="bottom">URLs to access data by the UID</caption> 
+        <tr>
+          <th nowrap>Data</th>
+          <th nowrap>URL</th>
+        </tr>
+        <tr>
+          <td nowrap>Action Recipes</td>
+          <td nowrap>{{ Domain }}api/0.1/recipe/&lt;UID&gt;</td>
+        </tr>
+        <tr>
+          <td nowrap>Object Description</td>
+          <td nowrap>{{ Domain }}api/0.1/object/&lt;UID&gt;</td>
+        <tr>
+          <td nowrap>Environment</td>
+          <td nowrap>{{ Domain }}api/0.1/environment/&lt;UID&gt;</td>
+        </tr>
+      </table> 
+
+      <p>Object descriptions,  action recipes and environment descriptions are
+      encoded in OWL. If the exact UID is not known than RoboEarth is able to
+      execute <a href="http://www.openrdf.org/doc/sesame/users/ch06.html">SeRQL</a>
+      queries to find the corresponding data. A SeRQL query can be send by a
+      "POST"-request to the following URLs:</p>
+
+      <table border="1" frame="box"  rules="all" cellpadding="5">
+	<caption align="bottom">Access data by a SeRQL query</caption> 
+        <tr>
+          <th nowrap>Data</th>
+          <th nowrap>URL</th>
+        </tr>
+        <tr>
+          <td nowrap>Action Recipes</td>
+          <td nowrap>{{ Domain }}api/0.1/recipe</td>
+        </tr>
+        <tr>
+          <td nowrap>Object Description</td>
+          <td nowrap>{{ Domain }}api/0.1/object</td>
+        </tr>
+        <tr>
+          <td nowrap>Environment</td>
+          <td nowrap>{{ Domain }}api/0.1/environment</td>
+        </tr>
+      </table> 
+
+      <p>The SeRQL query has to be encoded in JSON:</p>
+
+      <pre>
+{
+" query " : "SELECT source FROM CONTEXT source ..."
+}
+      </pre>
+
+      <p><b>Important!</b> Every query has to begin with <em>"SELECT source FROM CONTEXT source"</em>!
+
+      <a name="Upload"></a>
+      <h3>Upload</h3>
+
+      <p>For uploading data you need an account for the RoboEarth platform. The data of
+      the "POST"-request has to be encoded in
+      JSON. Table <a href="#UploadURLs">upload URLs</a> show the upload URLs.</p>
+
+      <a name="UploadURLs"></a>
+      <table border="1" frame="box"  rules="all" cellpadding="5">
+	<caption align="bottom">Upload URLs</caption> 
+        <tr>
+          <th nowrap>Data</th>
+          <th nowrap>URL</th>
+        </tr>
+        <tr>
+          <td nowrap>Action Recipes</td>
+          <td nowrap>{{ Domain }}api/0.1/recipe</td>
+        </tr>
+        <tr>
+          <td nowrap>Object Description</td>
+          <td nowrap>{{ Domain }}api/0.1/object</td>
+        <tr>
+          <td nowrap>Environment</td>
+          <td nowrap>{{ Domain }}api/0.1/environment</td>
+        </tr>
+      </table> 
+
+      <br /><br />
+
+      The API supports following data fields:
+
+      <br /><br />
+
+      <a name="JSONData"></a>
+      <table border="1" frame="box"  rules="all" cellpadding="5">
+	<caption align="bottom">Data Fields</caption> 
+        <tr>
+          <th nowrap>Data Type</th>
+          <th nowrap>Data Fields</th>
+          <th nowrap>Unified Identifier (generated automatically)</th>
+        </tr>
+        <tr>
+          <td nowrap>Action Recipes</td>
+          <td>class, id, description, recipe, api_key</td>
+          <td>class.id</td>
+        </tr>
+        <tr>
+          <td nowrap>Object Description</td>
+          <td width="100">class, id, description, object description (semantic data),
+          api_key</td>
+          <td>class.id</td>
+        <tr>
+          <td nowrap>Environment</td>
+          <td>class, id, environment (OWL), api_key</td>
+          <td>class.id</td>
+        </tr>
+        <!--
+        <tr>
+          <td nowrap>Object Location</td>
+          <td>object, environment, posX, posY, posZ, delta, api_key</td>
+          <td>country.zip.city.street.house_number.posX.posY.posZ.delta</td>
+        </tr>
+        -->
+        <tr>
+          <td nowrap>Robot</td>
+          <td nowrap>environment, id, api_key</td>
+          <td>id</td>
+        </tr>
+      </table> 
+
+      <p>Object descriptions contain binary data. This data has to be uploaded
+      in a second step. Once the text data where uploaded RoboEarth will return
+      the data, including the complete UID (class.id) which has to be used to
+      upload the binary data. The "POST"-request has to contain your "api_key"
+      for authentication and the "file". Object description allow an arbitrary
+      number of binary files, therefor you have to specifiy the file identifier
+      additionally. The Upload URL is:
+	<pre>{{ Domain }}api/0.1/binary/&lt;UID&gt;</pre>
+      </p>
+
+      <a name="Update"></a>
+      <h3>Update</h3>
+
+      Existing data can be updated by sending an "PUT"-request to
+      the <a href="#UploadURLs">same URLs</a> with the
+      same <a href="#JSONData">data fields</a> described in the
+      section <a href="#Upload">Upload</a>.</p>
+
+
+      <a name="Delete"></a>
+      <h3>Delete</h3>
+      
+      <p>To delete an object the exact UID has to be known. Further you need to
+      have an account for the RoboEarth platform. Following URLs can be
+      used to delete an entry by sending an "DELETE"-request:</p>
+      
+      <table border="1" frame="box"  rules="all" cellpadding="5">
+	<caption align="bottom">URLs to delete data</caption> 
+        <tr>
+          <th nowrap>Data</th>
+          <th nowrap>URL</th>
+        </tr>
+        <tr>
+          <td nowrap>Action Recipe</td>
+          <td nowrap>{{ Domain }}api/recipe/&lt;UID&gt;/&lt;API_KEY&gt;</td>
+        </tr>
+        <tr>
+          <td nowrap>Object Description</td>
+          <td nowrap>{{ Domain }}api/object/&lt;UID&gt;/&lt;API_KEY&gt;</td>
+        </tr>
+        <tr>
+          <td nowrap>File</td>
+          <td nowrap>{{ Domain }}api/object/&lt;UID&gt;/&lt;API_KEY&gt;/&lt;FILE_ID&gt;</td>
+        </tr>
+        <tr>
+          <td nowrap>Environment</td>
+          <td nowrap>{{ Domain }}api/environment/&lt;UID&gt;/&lt;API_KEY&gt;</td>
+        </tr>
+      </table> 
+        
+
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>

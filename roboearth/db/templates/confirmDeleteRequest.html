@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Confirm Delete Requeat - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      <p class="center">Do you really want to delete "{{ row_key }}"?</p>
+	  <form action="/finalDelete" method="post" class="center">{% csrf_token %}
+            <input name="table" type="hidden" value="{{ table }}">
+            <input name="rowKey" type="hidden" value="{{ row_key }}">
+            <input name="binary" type="hidden" value="{{ binary }}">
+            {% if colID %}
+            <input name="colID" type="hidden" value="{{ colID }}">
+            <input name="file" type="hidden" value="{{ file }}">
+            {% endif %}
+            <input type="submit" value="YES">
+	  </form>
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>

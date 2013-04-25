@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>SeRQL Console - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      <h1>SeRQL Console</h1>
+
+      <p>
+          <table border="0" cellspacing="20">
+	    <form class="center" action="/serql/result" method="get">{% csrf_token %}
+            <tr><td>Repository:</td><td><select name="repository">
+              <option value="recipes">Action Recipes</option>
+              <option value="objects">Object Descriptions</option>
+              <option value="environments">Environments</option>
+              <option value="all" disabled="disabled">All</option>
+            </select> <input type="submit" value="Execute Query"></td></tr>
+            <tr><td nowrap>Semantic Query:</td>
+              <td nowrap><textarea name="semanticQuery" rows="15" cols="60">{{ query }}</textarea><br/>
+                (Use the <a href="http://www.openrdf.org/doc/sesame2/users/ch09.html">SeRQL query
+                  language</a>)</td></tr>
+	    </form>
+            <tr><td nowrap><a name="results"></a>Results:</td>
+              <td nowrap><textarea name="result" rows="15" cols="60" readonly>{{ result }}</textarea></td></tr>
+          </table>
+      </p>
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>

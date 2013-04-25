@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Search Object Location - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      <h1>Search Object Location</h1>
+      <p>
+	<form class="center" action="/locations/objects/result" method="get">
+          <table border="0" cellspacing="20">
+            <tr><td nowrap>Location:</td><td><input name="query" type="text" size ="30"></td></tr>
+            <tr><td nowrap>Object (optional):</td><td><input name="obj" type="text" size ="30"></td></tr>
+          </table>
+	    <input name="format" type="hidden" value="html">
+            <input type="submit" value="Search">
+	</form>
+      </p>
+    </div>
+  </body>
+</html>

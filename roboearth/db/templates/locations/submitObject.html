@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Submit Object Location - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      <h1>Submit Object Location</h1>
+      
+      <p>
+	<form action="/locations/objects/submit" method="post" class="commitForm">
+          <table border="0" cellspacing="20">
+            <!--<tr><td>Object:</td><td><input name="object" type="text" size ="30"></td></tr>-->
+            <tr><td>Object:</td><td><select name="object">
+            {% for obj in Objects %}
+              <option value="{{obj}}">{{obj}}</option>
+            {% endfor %}
+            </select></td></tr>
+            <!--<tr><td>Environment:</td><td><input name="environment" type="text" size="30"></td></tr>-->
+            <tr><td>Environment:</td><td><select name="environment">
+            {% for env in Environments %}
+              <option value="{{env}}">{{env}}</option>
+            {% endfor %}
+            </select></td>
+            <td>Room:</td><td><input name="room_number" type="text" size="10"></td></tr>
+          </table>
+          <table border="0" cellspacing="20">
+            <tr><td>X:</td><td><input name="posX" type="text" size="5"></td>
+            <td>Y:</td><td><input name="posY" type="text" size ="5"></td>
+            <td>Z:</td><td><input name="posZ" type="text" size ="5"></td>
+            <td>Delta:</td><td><input name="delta" type="text"size="5"></td></tr>
+          </table>
+          <input type="submit" value="Insert">
+	</form>
+      </p>     
+    </div>
+  </body>
+</html>

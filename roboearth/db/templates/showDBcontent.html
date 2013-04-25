@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Database Content - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      <h1>Complete Database Content</h1>
+
+      <h2>Action Recipes</h2>
+
+      {% for recipe in Recipes %}
+      <p>
+	ID: <b>{{ recipe.arID }}</b><br />
+	<form action="/deleteEntity" method="post">
+          <input name="table" type="hidden" value="Recipes">
+          <input name="rowKey" type="hidden" value="{{ recipe.arID }}">
+          <input type="submit" value="Delete {{ recipe.arID }}">
+	</form>
+	Description: <b>{{recipe.arDescription}}</b><br />
+	Action Recipe:
+        <ul>
+        {% for rec in recipe.arRecipes %}
+        <li>Timestamp: <b>{{rec.timestamp }}</b><br/>
+        Recipe: <xmp>{{rec.recipe|safe}}</xmp></li>
+        {% endfor %}
+        </ul>
+      </p>
+      {% endfor %}
+
+      <hr>
+
+      <h2>Objects</h2>
+
+      {% for obj in Objects %}
+
+      <p>
+	ID: <b class="id">{{ obj.objID }}</b><br />
+	<form action="/deleteEntity" method="post">
+          <input name="table" type="hidden" value="Objects">
+          <input name="rowKey" type="hidden" value="{{ obj.objID }}">
+          <input type="submit" value="Delete {{obj.objID}}">
+	</form>
+	Description: <b>{{ obj.objDescription }}</b><br />
+	Model: <a href="{{ obj.objModel }}">Download</a><br />
+	Image:<br /><img src="{{ obj.objImage }}" />
+	OWL Description:
+        <ul>
+        {% for rec in obj.objOWLDescription %}
+        <li>Timestamp: <b>{{rec.timestamp }}</b><br/>
+        OWL Description: <xmp>{{rec.description|safe}}</xmp></li>
+        {% endfor %}
+        </ul>
+
+      </p>
+
+      {% endfor %}
+
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>

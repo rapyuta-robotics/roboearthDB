@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Search Objects - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      <h1>Search Objects</h1>
+      <p>
+	<form class="center" action="/objects/result" method="get">{% csrf_token %}
+          <p>Syntactic Query: <input name="query" type="text" size ="30">
+	    <input name="format" type="hidden" value="html">
+            <input type="submit" value="Search">
+          </p>
+	</form>
+      </p>
+
+      <br /><br />
+
+      <hr>
+
+      <p>
+	<form class="center" action="/objects/result" method="get">{% csrf_token %}
+          <table border="0" cellspacing="20">
+            <tr><td nowrap>Semantic Query:</td>
+              <td nowrap><textarea name="semanticQuery" rows="15" cols="60">SELECT source FROM CONTEXT source
+</textarea><br/>
+                (Use the <a href="http://www.openrdf.org/doc/sesame2/users/ch09.html">SeRQL query language</a>; Don't change the SELECT-statement!)</td></tr>
+          </table>
+	    <input name="format" type="hidden" value="html">
+            <input type="submit" value="Search">
+	</form>
+      </p>
+
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>

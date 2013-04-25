@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Submit Environment - RoboEarth</title>
+    <SCRIPT LANGUAGE="JavaScript">
+      function showHide(id)
+      {
+        var style = document.getElementById(id).style
+        if (style.visibility == "hidden") {
+          style.visibility = "visible";
+          style.display = "inline";
+        } else {
+          style.visibility = "hidden";
+          style.display = "none";
+        }
+      }
+    </SCRIPT>
+  </head>
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu|safe }}
+    </div>
+    
+    <div id="content">
+
+      <h1>Submit Environment</h1>
+
+      <p>
+	<form action="/environments/submit" method="post" class="commitForm">{% csrf_token %}
+          <table border="0" cellspacing="20">
+            <tr><td>Class</td><td>.</td><td>Identifier</td>
+            <tr><td><input name="class" type="text" size ="30"></td>
+              <td>.</td>
+              <td><input name="id" type="text" size ="30"></td></tr>
+          </table>
+          <table border="0" cellspacing="20">
+            <tr><td>Description:</td><td><textarea name="description" rows="3" cols="60"></textarea></td></tr>
+            <tr><td>Environment:</td><td><textarea name="environment" rows="3"
+            cols="60"></textarea><br/>(OWL description)</td></tr>
+            <tr><td>
+          </table>
+          <table border="0" cellspacing="20">          
+            <tr><td><input type="checkbox" name="addGeodata" value="geodata"
+            onclick='showHide("geoArea");'>add geographical coordinates
+            (optional)</input></td></tr>
+            </table>
+          <table border="0" cellspacing="20" id="geoArea" style="visibility:hidden; display: none;">          
+            <tr><td>Latitude:</td><td><input name="lat" type="text" size="10"></td>
+            <td>Longitude:</td><td><input name="lng" type="text" size ="10"></td></tr>
+          </table>
+          <input type="submit" value="Insert" />
+	</form>
+      </p>
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>

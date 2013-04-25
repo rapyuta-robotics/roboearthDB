@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Database Statistics - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu }}
+    </div>
+    
+    <div id="content">
+
+      <h1>Database Statistics</h1>
+
+      <p>
+	{% for counter in counters %}
+	stored {{counter.name}}: <b>{{counter.count}}</b><br />
+	{% endfor %}
+      </p>
+    
+      <hr/>
+
+      <h2>Delete complete database content</h2>
+      
+      <p>
+	<form action="/clearDB" method="post">
+          <p>Do you really want to delete the complete database (YES/NO)?:
+            <input name="approve" type="text" size="3" value="NO">
+            <input type="submit" value="Delete">
+          </p>
+	</form>
+      </p>
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>

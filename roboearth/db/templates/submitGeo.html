@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <title>Submit Geographical Location - RoboEarth</title>
+  </head>
+  <body>
+
+    <div id="contentArea">
+
+    <div id="logo">
+      <a href="/">
+        <img src="/img/RoboEarth.org_logo.png" alt="RoboEarth Logo" \>
+      </a>
+    </div>
+
+    <div id="menu">
+      {{ MainMenu }}
+    </div>
+    
+    <div id="content">
+
+      <h1>Submit Geographical Location</h1>
+
+      <p>
+	<form action="/submitGeo" method="post">
+          <p>Geographical Location:<br /> 
+            <small>Address or (Lat, Long)</small><br/>
+            <input name="geo" type="text" size ="30"></p>
+          <p>Additional Information:<br/>
+            <textarea name="infos" rows="3" cols="60"></textarea></p>
+          <input type="submit" value="Insert">
+	</form>
+      </p>
+    </div>
+    </div>
+    <div id="footer">
+      {{ Footer|safe }}
+    </div>
+  </body>
+</html>
