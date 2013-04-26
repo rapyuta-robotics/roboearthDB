@@ -1,0 +1,2 @@
+javac -cp .:/home/marcus/Downloads/roboearth-20110701/SesameConnector:/home/marcus/Downloads/roboearth-20110701/SesameConnector/lib/*  SesameConnector.java
+

@@ -115,12 +115,14 @@ def dbContent(request):
 def finalDelete(request):
     """ execute delete operation after the user approved the operation
     """
+    print 'sdsad'
     try:
         if request.POST['binary'] == "0":        
             hbase.delete_row(request.POST['table'], request.POST['rowKey'])
             hbase.delete_column('Users', request.user.username, request.POST['table'].lower()[0:len(request.POST['table'])-1]+':'+request.POST['rowKey'])
             return  HttpResponse(success(request))
         else:
+            print 'herher'
             hdfs.rm_file(request.POST['file'].replace(roboearth.BINARY_ROOT, roboearth.UPLOAD_DIR))
             hbase.delete_column(request.POST['table'], request.POST['rowKey'], 'file:'+request.POST['colID'])
             return  HttpResponse(success(request))
@@ -139,7 +141,6 @@ def deleteEntity(request):
 
     if request.user.username != request.POST['author']:
         return HttpResponse(error(request, errorType=0, errorMessage="User not allowed to delete " + request.POST['rowKey']))
-
 
     webpage_values = roboearth.webpage_values(request,
                                               {'table' : request.POST['table'],

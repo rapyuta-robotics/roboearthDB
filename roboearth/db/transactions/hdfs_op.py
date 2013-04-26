@@ -40,7 +40,7 @@ def upload_file(f, path):
         if os.path.exists(filename):
             raise roboearth.DBWriteErrorException
             #os.remove(filename)
-        destination = open(filename, 'wb+')
+        destination = open(filename, 'w')
         for chunk in f.chunks():
             destination.write(chunk)
         destination.close()

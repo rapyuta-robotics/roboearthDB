@@ -26,6 +26,7 @@ import roboearth.db.transactions.sesame
 import xml.dom.minidom
 import time
 import magic
+import logging
 
 from thrift import Thrift
 from thrift.transport import TSocket
@@ -60,7 +61,7 @@ def set(id_, class_, description, object_description, author, files=None):
 
     files: dictionary of binary files (file identifier : file)
     """
-
+    logging.basicConfig(filename='example.log',level=logging.DEBUG)
     transport = roboearth.openDBTransport()
     client = transport['client']
 
@@ -84,38 +85,41 @@ def set(id_, class_, description, object_description, author, files=None):
                 file_mutation_list.append(Mutation(column="file:"+file_ID, value=wwwPath+"/"+file_.name))
 
         # now write to hbase
-        client.mutateRow("Objects", identifier,
+        client.mutateRow("Elements", identifier,
                          [Mutation(column="info:description", value=description),
                           Mutation(column="info:author", value=author),
-                          Mutation(column="rating", value="1"),
-                          Mutation(column="object:description", value=object_description)]+
+                          Mutation(column="info:rating", value="1"),
+                          Mutation(column="info:type", value="object"),
+                          Mutation(column="owl:description", value=object_description)]+
                          file_mutation_list)
-
+        
         #write data to sesame
-        sesame_ret = sesame.set(object_description, identifier, "objects")
+        sesame_ret = sesame.set(object_description, identifier, "elements")
         if sesame_ret != "0":
-            hbase_op.delete_row("Objects", identifier)
+            hbase_op.delete_row("Elements", identifier)
+            print 'raising shit'
             raise IllegalArgument(sesame_ret)
 
         client.mutateRow("Users", author,
-                         [Mutation(column="object:"+identifier, value="")])
+                         [Mutation(column="element:"+identifier, value="")])
 
         roboearth.closeDBTransport(transport)
 
-        if not roboearth.local_installation:
-            roboearth.send_twitter_message("upload", "Object", identifier, author)
+        #if not roboearth.local_installation:
+        #    roboearth.send_twitter_message("upload", "Object", identifier, author)
 
         return {'id' : identifier, 'description' : description, 'object_description' : object_description}
 
     except (IOError, IllegalArgument), err:
         try: # try clean up
             hdfs.rm_dir(path)
-            hbase_op.delete_row("Objects", identifier)
-            sesame.rm(identifier, "Objects")
+            hbase_op.delete_row("Elements", identifier)
+            sesame.rm(identifier, "Elements")
         except:
             sys.exc_clear()
-        
-        raise roboearth.DBWriteErrorException("Can't write data to Object table: " + err.__str__())
+        import traceback
+        logging.info(traceback.format_exc())
+        raise roboearth.DBWriteErrorException("Can't write data to Object table: HEREEEEE " + err.__str__())
 
 def update(id_, data, author):
     """
@@ -136,7 +140,7 @@ def update(id_, data, author):
         if data.has_key('description'):
             mutation_list.append(Mutation(column="info:description", value=data['description']))            
         if data.has_key('object_description'):
-            mutation_list.append(Mutation(column="object:description", value=data['object_description']))            
+            mutation_list.append(Mutation(column="owl:description", value=data['object_description']))            
         
         client.mutateRow("Objects", id_,
                          [Mutation(column="info:modified_by", value=author)] +
@@ -183,7 +187,7 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery=False
         """
         add results to the output dictionary
         """
-        rating = row.columns['rating:'].value
+        rating = row.columns['info:rating'].value
         output = {"id" : row.row,
                   "description" : row.columns['info:description'].value,
                   "author" : row.columns['info:author'].value,
@@ -208,9 +212,9 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery=False
                 url_ = res[0].columns[r].value
                 file_ = roboearth.UPLOAD_DIR+url_[len(roboearth.BINARY_ROOT):]
                 output["files"][r[5:]] = {'url' : url_,
-                                          'mime-type' : m.file(file_)} 
+                                          'mime-type' : m.from_file(file_)} 
 
-        versions = client.getVer("Objects", row.row, "object:description", numOfVersions)
+        versions = client.getVer("Elements", row.row, "owl:description", numOfVersions)
         if format=="html":
             for v in versions:
                 try:
@@ -219,8 +223,8 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery=False
                 except:
                     output['object_description'].append({ 'timestamp' : time.ctime(int(i.timestamp)/1000),
                                                           'description' : v.value })
-                output['fullStars'] = range(round(float(rating)))
-                output['emptyStars'] = range(10 - round(float(rating)))
+                output['fullStars'] = range(int(round(float(rating))))
+                output['emptyStars'] = range(10 - int(round(float(rating))))
         else:
             for v in versions:            
                 output['object_description'].append({ 'timestamp' : v.timestamp,
@@ -244,12 +248,11 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery=False
     transport = roboearth.openDBTransport()
     client = transport['client']
 
-    m = magic.open(magic.MAGIC_MIME)
-    m.load()
+    m = magic.Magic(mime=True)
 
     result = list()
     for q in query:
-        scanner = client.scannerOpenWithPrefix("Objects", q.lower(), [ ])
+        scanner = client.scannerOpenWithPrefix("Elements", q.lower(), [ ])
         res = client.scannerGet(scanner)
         while res:
             if (semanticQuery == False and exact == False) or res[0].row == q:
@@ -340,7 +343,7 @@ def setLocation(environment, room_number, object_, posX, posY, posZ, delta, auth
         roboearth.closeDBTransport(transport)
         return {'id' : id_, 'posX' : posX, 'posY' : posY, 'posZ' : posZ, 'delta' : delta, 'object' : object_, 'environment' : environment, 'room_number' : room_number}
     except (IOError, IllegalArgument), err:
-        raise roboearth.DBWriteErrorException("Can't write data to Object table: " + err.__str__())
+        raise roboearth.DBWriteErrorException("Can't write dataop to Object table: " + err.__str__())
 
 def updateLocation(id_, posX, posY, posZ, delta, author):
     """

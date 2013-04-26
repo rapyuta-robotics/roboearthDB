@@ -4,3 +4,5 @@
 .settings/*
 roboearth/user.db
 roboearth/html/*
+*.class
+*.jar

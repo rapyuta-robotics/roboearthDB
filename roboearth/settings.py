@@ -11,7 +11,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/home/marcus/Downloads/roboearth-20110701/roboearth/user.db',   # Or path to database file if using sqlite3.
+        'NAME': '/home/marcus/workspace/roboearth/roboearth/user.db',   # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -77,7 +77,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'roboearth.urls'
 
-TEMPLATE_DIRS = ("/home/marcus/Downloads/roboearth-20110701/roboearth/db/templates"
+TEMPLATE_DIRS = ("/home/marcus/workspace/roboearth/roboearth/db/templates"
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -94,4 +94,4 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
 )
 
-STATIC_DOC_ROOT="/home/marcus/Downloads/roboearth-20110701/roboearth/db/"
+STATIC_DOC_ROOT="/home/marcus/workspace/roboearth/roboearth/db/"

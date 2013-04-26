@@ -37,17 +37,17 @@ local_installation = True
 DOMAIN = "http://localhost:8000/"
 BINARY_ROOT = DOMAIN+"data"
 # location of binary data
-UPLOAD_DIR = "/home/marcus/Downloads/roboearth-20110701/data"
+UPLOAD_DIR = "/home/marcus/hadoop"
 # Hadoop name node
-NAMENODE = "marcus"
+NAMENODE = "localhost"
 NAMENODE_PORT = 9090
 # reasoning server
 SESAME_SERVER="http://localhost:8080/openrdf-sesame"
 # java program to access the reasoning server
 SESAME_CONNECTOR="SesameConnector"
-SESAME_CONNECTOR_LIBS=".:/home/marcus/Downloads/roboearth-20110701/SesameConnector:/home/marcus/Downloads/roboearth-20110701/SesameConnector/lib/*"
+SESAME_CONNECTOR_LIBS=".:/home/marcus/workspace/roboearth/SesameConnector:/home/marcus/workspace/roboearth/SesameConnector/lib/*"
 # e-mail address which is used for system notifications
-ADMIN="mayanks43@gmail.com"
+ADMIN="admin@admin/com"
 
 # some pre-defined error types
 ERROR_TYPES = {0 : "UNKNOWN ERROR",

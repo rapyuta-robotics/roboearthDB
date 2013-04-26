@@ -60,8 +60,8 @@ def delete_row(table, rowKey):
     deletes a complete row (rowKey) from a given table
     """
 
-    hasBinaryFiles = ["Objects", "Robots"]
-    hasGraphData = ["Objects", "Recipes", "Environments"]
+    hasBinaryFiles = ["Elements"]
+    hasGraphData = ["Elements"]
 
     transport = roboearth.openDBTransport()
     client = transport['client']
@@ -75,6 +75,7 @@ def delete_row(table, rowKey):
             
     except IOError, err:
         roboearth.closeDBTransport(transport)
+        print table, rowKey
         raise roboearth.DBWriteErrorException("Can't delete data: " + err.__str__())
 
 def delete_column(table, rowKey, column):

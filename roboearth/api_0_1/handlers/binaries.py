@@ -64,7 +64,7 @@ def upload(request, identifier):
             return rc.BAD_REQUEST
         transport = roboearth.openDBTransport()
         client = transport['client']
-        scanner = client.scannerOpenWithPrefix("Objects", identifier.lower(), [ ])
+        scanner = client.scannerOpenWithPrefix("Elements", identifier.lower(), [ ])
         res = client.scannerGet(scanner)
         client.scannerClose(scanner)
         if res:

@@ -33,12 +33,8 @@ def rm(rowKey, repository):
     repository: the repository which hosts the owl description
     """
 
-    if repository.lower() == "recipes":
-        location="recipe"
-    if repository.lower() == "objects":
-        location = "object"
-    if repository.lower() == "environments":
-        location="environment"
+    if repository.lower() == "elements":
+        location="elements"
     uid = roboearth.DOMAIN + "api/" + location + "/" + rowKey
     cmd = ["java", "-cp", roboearth.SESAME_CONNECTOR_LIBS, roboearth.SESAME_CONNECTOR, "rm", roboearth.SESAME_SERVER, repository.lower(), uid]
     p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
@@ -57,14 +53,13 @@ def set(data, data_id, repository):
     """
     
     data = (" ".join("%s" % line for line in data.splitlines())).strip()
-    if repository.lower() == "recipes":
-        location="recipe"
-    if repository.lower() == "objects":
-        location = "object"
-    if repository.lower() == "environments":
-        location = "environment"
+    if repository.lower() == "elements":
+        location="elements"
+
     uid = roboearth.DOMAIN + "api/" + location + "/"+data_id
+    
     cmd = ["java", "-cp", roboearth.SESAME_CONNECTOR_LIBS, roboearth.SESAME_CONNECTOR, "set", roboearth.SESAME_SERVER, repository.lower(), uid, data_id]
+    print cmd
     p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
     stdout, stderr = p.communicate()
     if p.returncode == 0:

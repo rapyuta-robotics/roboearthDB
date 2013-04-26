@@ -204,9 +204,9 @@ class ObjectHandler(AnonymousBaseHandler):
          if data:
             file_type = data
             hdfs_op.rm_file(object_[0]["files"][file_type]["url"].replace(roboearth.BINARY_ROOT, roboearth.UPLOAD_DIR))
-            hbase_op.delete_column("Objects", object_id, 'file:'+file_type)
+            hbase_op.delete_column("Elements", object_id, 'file:'+file_type)
          else:
-            hbase_op.delete_row("Objects", object_id)
+            hbase_op.delete_row("Elements", object_id)
       except Exception, e:
          return rc.NOT_HERE
 
