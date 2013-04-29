@@ -47,7 +47,7 @@ def submitForm(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect("/login")
 
-    values = {'Environments' : hbase_op.list_all("Environments")}
+    values = {}#'Environments' : hbase_op.list_all("Environments")}
     
     return render_to_response('submitRobot.html', roboearth.webpage_values(request, values))
 
@@ -68,38 +68,11 @@ def submit(request):
 
     if request.method == 'POST':
         try:
-            if request.POST.has_key('web') and request.POST['web'] == 'True':
-                environment = request.POST['environment']
-                #latitude = request.POST['latitude']
-                #longitude = request.POST['longitude']
-                latitude = ""
-                longitude = ""
-                if len(environment) > 0:
-                    latitude = ""
-                    longitude = ""
-                elif len(latitude) > 0 and len(longitude) > 0:
-                    environment = ""
-                else:
-                    raise roboearth.FormInvalidException("Either provide a environment or latitude/longitude coordinates")
-            else:
-                if request.POST.has_key('environment'):
-                    environment = request.POST['environment']
-                    latitude = ""
-                    longitude = ""
-                elif request.POST.has_key('longitude') and request.POST.has_key('latitude'):
-                    latitude = request.POST['latitude']
-                    longitude = request.POST['longitude']
-                    environment = ""
-                else:
-                    raise roboearth.FormInvalidException("Either provide a environment or latitude/longitude coordinates")
-
             transaction.set(id_=request.POST['id'],
                             author=request.user.username,
-                            environment=environment,
                             description=request.POST['description'],
-                            picture=request.FILES['picture'],
-                            latitude=latitude,
-                            longitude=longitude)
+                            srdl=request.POST['srdl'],
+                            picture=request.FILES['picture'])
             return HttpResponse(views.success(request))
         except (roboearth.DBWriteErrorException, roboearth.DBException), err:
             return HttpResponse(views.error(request, nextPage="/robots", errorType=2, errorMessage=err.__str__()))

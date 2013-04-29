@@ -94,10 +94,7 @@ def getSubscriptions(username):
     user = client.scannerGet(scanner)
 
     result = { }
-    result['Recipes'] = list()
-    result['Objects'] = list()
-    result['Environments'] = list()
-    result['Robots'] = list()
+    result['Elements'] = list()
     result['Users'] = list()
     while user:
         uname, table, uid = user[0].row.split('#',2)

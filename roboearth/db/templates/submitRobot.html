@@ -28,14 +28,9 @@
 	<form action="/robots/submit" enctype="multipart/form-data" method="post" class="commitForm">{% csrf_token %}
           <table border="0" cellspacing="20">
             <tr><td nowrap>Robot ID:</td><td><input name="id" type="text" size="20"></td></tr>
-            <tr><td>Environment:</td><td nowrap><select name="environment">
-            {% for bld in Environments %}
-              <option value="{{bld}}">{{bld}}</option>
-            {% endfor %}
-            </select>
-            </td></tr>
             <tr><td nowrap>Description:</rd><td><textarea name="description" rows="5" cols="60"></textarea></td></tr>
-<tr><td nowrap>Picture:</td><td><input name="picture" id="picture" type="file"/></td></tr>
+            <tr><td nowrap>Sematic Robot Description (<a href="http://ias.in.tum.de/kb/wiki/index.php/SRDL_Basic_Tutorial">SRDL</a>):</rd><td><textarea name="srdl" rows="5" cols="60"></textarea></td></tr> 
+			<tr><td nowrap>Picture:</td><td><input name="picture" id="picture" type="file"/></td></tr>
           </table>
           <input name="web" type="hidden" value="True">
           <input type="submit" value="Insert" />

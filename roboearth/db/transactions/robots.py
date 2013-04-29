@@ -34,19 +34,21 @@ from hbase.ttypes import *
 hdfs = roboearth.db.transactions.hdfs_op
 roboearth = roboearth.db.roboearth
 
-def set(id_, environment, description, picture, author, latitude="", longitude=""):
+def set(id_, author, description, srdl, picture):
     """
     write a robot location to the database
 
     id_ : robot identifier
 
-    environmanet : reference to the related environment
+    author : author who submitted the data
 
     description : description of the reobot
+    
+    srdl: Semantic Robot Description of the robot
 
     picture: picture of the robot
 
-    author : author who submitted the data
+    
     """
 
     transport = roboearth.openDBTransport()
@@ -61,41 +63,26 @@ def set(id_, environment, description, picture, author, latitude="", longitude="
         wwwPath = roboearth.DOMAIN + os.path.join("data/", 'robots/', id_.replace(' ', '').lower().strip('.'), picture.name)
         hdfs.upload_file(picture, os.path.join(roboearth.UPLOAD_DIR, 'robots/', id_.replace(' ', '').lower().strip('.')))
         
-        if environment == "":
-            client.mutateRow("Robots", id_.lower(),
-                             [Mutation(column="geographical:latitude", value=latitude),
-                              Mutation(column="info:author", value=author),
+        client.mutateRow("Elements", id_.lower(),
+                             [Mutation(column="info:author", value=author),
                               Mutation(column="info:description", value=description),
+                              Mutation(column="owl:description", value=srdl),
                               Mutation(column="info:picture", value=wwwPath),
-                              Mutation(column="geographical:longitude", value=longitude)])
-        else:
-            scanner = client.scannerOpenWithPrefix("Environments", environment.lower(), [ ])
-            if not client.scannerGet(scanner):
-                raise roboearth.NoDBEntryFoundException("Couldn't connect robot with the named environment. Environment doesn't exits in database")
-            
-            client.mutateRow("Robots", id_,
-                             [Mutation(column="environment:id", value=environment.lower()),
-                              Mutation(column="info:author", value=author),
-                              Mutation(column="info:description", value=description),
-                              Mutation(column="info:picture", value=wwwPath)])
-            
+                              Mutation(column="info:type", value='robot')])
         client.mutateRow("Users", author,
-                         [Mutation(column="robot:"+id_, value="")])
+                         [Mutation(column="element:"+id_, value="")])
 
         roboearth.closeDBTransport(transport)
-        return {'id' : id_, 'environment' : environment, 'description' : description}
+        return {'id' : id_, 'description' : description, 'srdl' : srdl}
     except (IOError, IllegalArgument), err:
         raise roboearth.DBWriteErrorException("Can't write data to Robot table: " + err.__str__())
 
-def update(id_, environment, room_number, author):
+def update(id_, environment, author):
     """
-    update location information at the database
 
     id_ : robot identifier
 
-    environmanet : reference to the related environment
-
-    room_number : the room where the robot is located
+    environment : reference to the related environment
 
     author : author who submitted the data
     """
@@ -103,13 +90,11 @@ def update(id_, environment, room_number, author):
     transport = roboearth.openDBTransport()
     client = transport['client']
     try:
-        client.mutateRow("Robots", id_,
-                         [Mutation(column="environment:id", value=environment),
-                          Mutation(column="info:author", value=author),
-                          Mutation(column="environment:room", value=room_number)])
+        client.mutateRow("Elements", id_,
+                          [Mutation(column="info:author", value=author)])
 
         # push update to subscribers
-        scanner = client.scannerOpenWithPrefix("Robots", id_, [ ])
+        scanner = client.scannerOpenWithPrefix("Elements", id_, [ ])
         res = client.scannerGet(scanner)
         for r in res[0].columns:
             if r.startswith("subscriber:"):
@@ -119,7 +104,7 @@ def update(id_, environment, room_number, author):
 
         roboearth.closeDBTransport(transport)
         
-        return {'id' : id_, 'environment' : environment, 'room_number' : room_number}
+        return {'id' : id_}
     except (IOError, IllegalArgument), err:
         raise roboearth.DBWriteErrorException("Can't write data to Robots table: " + err.__str__())
 
@@ -138,6 +123,7 @@ def get(query="", numOfVersions = 1, user="", format="html", exact=False):
     def addObject(row):
         output = {"id" : row.row,
                   "description" : row.columns['info:description'].value,
+                  "srdl" : row.columns['owl:description'].value,
                   "picture" : row.columns['info:picture'].value,
                   "author" : row.columns['info:author'].value}
 
@@ -149,24 +135,17 @@ def get(query="", numOfVersions = 1, user="", format="html", exact=False):
                 output['subscribed'] = True
             else:
                 output['subscribed'] = False
-
- 
-        if row.columns.has_key('environment:id'):
-            output['environment'] =  row.columns['environment:id'].value
-        if row.columns.has_key('geographical:latitude'):
-            output["latitude"] = row.columns['geographical:latitude'].value
-            output["longitude"] = row.columns['geographical:longitude'].value
         return output
 
     
     transport = roboearth.openDBTransport()
     client = transport['client']
-    scanner = client.scannerOpenWithPrefix("Robots", query.lower(), [ ])
+    scanner = client.scannerOpenWithPrefix("Elements", query.lower(), [ ])
     result = list()
 
     res = client.scannerGet(scanner)
     while res:
-        if exact==False or res[0].row == query:
+        if (exact==False or res[0].row == query) and res[0].columns['info:type'].value == 'robot':
             result.append(addObject(res[0])) 
         res = client.scannerGet(scanner)
 

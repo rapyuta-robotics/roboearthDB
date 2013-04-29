@@ -255,7 +255,7 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery=False
         scanner = client.scannerOpenWithPrefix("Elements", q.lower(), [ ])
         res = client.scannerGet(scanner)
         while res:
-            if (semanticQuery == False and exact == False) or res[0].row == q:
+            if ((semanticQuery == False and exact == False) or res[0].row == q) and res[0].columns['info:type'].value == 'object':
                 result.append(addObject(res[0])) 
             res = client.scannerGet(scanner)
 
@@ -285,7 +285,7 @@ def upload(request, identifier, author):
         hdfs.upload_file(file_, upload_path)
 
         # add reference to table
-        client.mutateRow("Objects", identifier,
+        client.mutateRow("Elements", identifier,
                          [Mutation(column="info:modified_by", value=author),
                           Mutation(column="file:"+type_, value=roboearth.DOMAIN + os.path.join("data/", "objects/", identifier.replace('.', '/'), file_.name))])
         roboearth.closeDBTransport(transport)

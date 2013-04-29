@@ -70,14 +70,13 @@
         {% if not my_robots %}
 	Author: <b>{{ robot.author }}</b><br /><br />
         {% endif %}
-	Environment: <b><a href="{{Domain}}environments/result?query={{robot.environment}}&format=html">{{robot.environment}}</a></b><br /><br />
-	<!--Latitude / Longitude: <b>{{robot.robLatitude}}</b> /  <b>{{robot.robLongitude}}</b><br />-->
+	
         Description: <b>{{robot.description}}</b><br /><br/>
       </p>
 
       
 
-      <br /><br /><br />
+      
       
       {% endfor %}
       

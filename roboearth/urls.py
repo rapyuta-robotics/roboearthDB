@@ -95,7 +95,7 @@ urlpatterns = patterns('',
     (r'^img/(?P<path>.*)$', 'django.views.static.serve', #ONLY FOR DEV!!!
      {'document_root': settings.STATIC_DOC_ROOT+'img'}), 
     (r'^data/(?P<path>.*)$', 'django.views.static.serve', #ONLY FOR DEV!!!
-     {'document_root': settings.STATIC_DOC_ROOT+'../../data'}), 
+     {'document_root': settings.STATIC_DOC_ROOT+'../../../../hadoop'}), 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
