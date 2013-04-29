@@ -22,6 +22,7 @@ import sys, os
 import roboearth.db.roboearth
 import roboearth.db.transactions.sesame
 import roboearth.db.transactions.hbase_op
+import roboearth.db.transactions.hdfs_op
 from roboearth.db.transactions.external import GeoData
 import xml.dom.minidom
 import time
@@ -36,9 +37,10 @@ from hbase.ttypes import *
 
 sesame = roboearth.db.transactions.sesame
 hbase_op = roboearth.db.transactions.hbase_op
+hdfs = roboearth.db.transactions.hdfs_op
 roboearth = roboearth.db.roboearth
 
-def set(id_, class_, description, environment, author, lat=None, lng=None):
+def set(id_, class_, description, environment, author, lat=None, lng=None, files=None):
     """
     write environment description to the database
 
@@ -56,11 +58,16 @@ def set(id_, class_, description, environment, author, lat=None, lng=None):
 
     mutation_list =list()
 
+    #create paths
+    path = class_.replace(' ', '').lower().strip('.') +  '.' +id_.replace(' ', '').lower().strip('.')
+    wwwPath = roboearth.DOMAIN + os.path.join("data/", 'environments/', path.replace('.', '/'))
+    path = os.path.join(roboearth.UPLOAD_DIR, 'environments/', path.replace('.', '/'))
+
     if class_.lower() == "osm":
         try: # try geocoding
             lat, lng = GeoData.geocoding(query=id_, service="osm")
-            mutation_list.append(Mutation(column="geo:lat", value=lat))
-            mutation_list.append(Mutation(column="geo:lng", value=lng))
+            mutation_list.append(Mutation(column="info:lat", value=lat))
+            mutation_list.append(Mutation(column="info:lng", value=lng))
             envName = class_.replace(' ', '').lower().strip('.') + '.' + lat.replace(".", ",") + '.'+lng.replace(".", ",")
 
         except Exception, err:
@@ -71,8 +78,8 @@ def set(id_, class_, description, environment, author, lat=None, lng=None):
         try:
             float(lat)
             float(lng)
-            mutation_list.append(Mutation(column="geo:lat", value=lat))
-            mutation_list.append(Mutation(column="geo:lng", value=lng))
+            mutation_list.append(Mutation(column="info:lat", value=lat))
+            mutation_list.append(Mutation(column="info:lng", value=lng))
         except Exception, err:
                 raise roboearth.FormInvalidException("Latitude/Longitude need to be float" + err.__str__())
 
@@ -81,28 +88,33 @@ def set(id_, class_, description, environment, author, lat=None, lng=None):
     # environment already exist
     if get(query=envName, exact=True):
         return None
-  
+    
+    # upload files and build file mutation list for hbase operation
+    file_mutation_list = [ ]
+    if files:
+        for file_ID, file_ in files.items():
+            hdfs.upload_file(file_, path)
+            file_mutation_list.append(Mutation(column="file:"+file_ID, value=wwwPath+"/"+file_.name))
+              
     try:
-        client.mutateRow("Environments", envName,
+        client.mutateRow("Elements", envName,
                          [Mutation(column="info:description", value=description),
                           Mutation(column="info:author", value=author),
-                          Mutation(column="rating", value="1"),
-                          Mutation(column="environment", value=environment)] +
-                         mutation_list)
+                          Mutation(column="info:rating", value="1"),
+                          Mutation(column="info:type", value="environment"),
+                          Mutation(column="owl:description", value=environment)] +
+                         mutation_list + file_mutation_list)
 
         #write data to sesame
-        sesame_ret = sesame.set(environment, envName, "environments")
+        sesame_ret = sesame.set(environment, envName, "elements")
         if  sesame_ret != "0":
-            hbase_op.delete_row("Environments", envName)
+            hbase_op.delete_row("Elements", envName)
             raise IllegalArgument(sesame_ret+'bug'+envName+' ' +environment)
 
         client.mutateRow("Users", author,
-                         [Mutation(column="environment:"+envName, value="")])
+                         [Mutation(column="element:"+envName, value="")])
 
         roboearth.closeDBTransport(transport)            
-
-        if not roboearth.local_installation:
-            roboearth.send_twitter_message("upload", "Environment", envName, author)
 
         return {'id' : envName, 'description' : description, 'environment' : environment}
 
@@ -176,7 +188,7 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery = Fal
         """
         add results to the output dictionary
         """
-        rating = row.columns['rating:'].value
+        rating = row.columns['info:rating'].value
         output = {"id" : row.row,
                   "description" : row.columns['info:description'].value,
                   "author" : row.columns['info:author'].value,
@@ -195,9 +207,9 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery = Fal
         if row.columns.has_key('info:modified_by'):
             output['modified_by'] = row.columns['info:modified_by'].value
 
-        if row.columns.has_key("geo:lat"):
-            lat = row.columns['geo:lat'].value
-            lng = row.columns['geo:lng'].value
+        if row.columns.has_key("info:lat"):
+            lat = row.columns['info:lat'].value
+            lng = row.columns['info:lng'].value
             delta = 0.002607
             output["location"] = {"latitude" : lat,
                                   "longitude" : lng}
@@ -209,7 +221,7 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery = Fal
                                              'raw_map_data' : GeoData.getRawData(float(lat), float(lng), delta)}
 
             
-        versions = client.getVer("Environments", row.row, "environment:", numOfVersions)
+        versions = client.getVer("Elements", row.row, "owl:", numOfVersions)
         if format=="html":
             for v in versions:
                 try:
@@ -246,10 +258,10 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery = Fal
 
     result = list()
     for q in query:
-        scanner = client.scannerOpenWithPrefix("Environments", q.lower(), [ ])
+        scanner = client.scannerOpenWithPrefix("Elements", q.lower(), [ ])
         res = client.scannerGet(scanner)
         while res:
-            if (semanticQuery == False and exact == False) or res[0].row == q:
+            if ((semanticQuery == False and exact == False) or res[0].row == q) and res[0].columns['info:type'].value == 'environment':
                 result.append(addEnv(res[0])) 
             res = client.scannerGet(scanner)
 

@@ -74,13 +74,18 @@ def submit(request):
                 lat = request.POST['lat']
                 lng = request.POST['lng']
                 
+            files = {}
+            for k,v in request.FILES.items():
+                files[request.POST[k]] = v
+
             if transaction.set(id_=request.POST['id'],
                                class_=request.POST['class'],
                                description=request.POST['description'],
                                environment=request.POST['environment'],
                                lat = lat,
                                lng = lng,
-                               author=request.user.username):
+                               author=request.user.username,
+                               files = files):
 
                 return HttpResponse(views.success(request))
             else:

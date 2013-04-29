@@ -63,25 +63,23 @@ def set(id_, class_, description, recipe, author):
             return None
 
         #write data to hbase
-        client.mutateRow("Recipes", recipeName,
+        client.mutateRow("Elements", recipeName,
                          [Mutation(column="info:description", value=description),
                           Mutation(column="info:author", value=author),
-                          Mutation(column="rating", value="1"),
-                          Mutation(column="recipe", value=recipe)])
+                          Mutation(column="info:rating", value="1"),
+                          Mutation(column="info:type", value="recipe"),
+                          Mutation(column="owl:description", value=recipe)])
 
         #write data to sesame
-        sesame_ret = sesame.set(recipe, recipeName, "recipes")
+        sesame_ret = sesame.set(recipe, recipeName, "elements")
         if sesame_ret != "0":
-            hbase_op.delete_row("Recipes", recipeName)
+            hbase_op.delete_row("Elements", recipeName)
             raise IllegalArgument(sesame_ret)
             
         client.mutateRow("Users", author,
-                         [Mutation(column="recipe:"+recipeName, value="")])
+                         [Mutation(column="element:"+recipeName, value="")])
 
         roboearth.closeDBTransport(transport)      
-
-        if not roboearth.local_installation:
-            roboearth.send_twitter_message("upload", "Action Recipe", recipeName, author)
 
         return {'id' : recipeName, 'description' : description, 'recipe' : recipe}
     except (IOError, IllegalArgument), err:
@@ -175,7 +173,7 @@ def get(query="", user="", format="html", numOfVersions = 1, semanticQuery = Fal
         """
         add results to the output dictionary
         """
-        rating = row.columns['rating:'].value
+        rating = row.columns['info:rating'].value
         
         output = {"id" : row.row,
                   "description" : row.columns['info:description'].value,
@@ -196,7 +194,7 @@ def get(query="", user="", format="html", numOfVersions = 1, semanticQuery = Fal
         if row.columns.has_key('info:modified_by'):
             output['modified_by'] = row.columns['info:modified_by'].value
             
-        versions = client.getVer("Recipes", row.row, "recipe:", numOfVersions)
+        versions = client.getVer("Elements", row.row, "owl:", numOfVersions)
         if format=="html":
             for v in versions:
                 try:
@@ -219,7 +217,7 @@ def get(query="", user="", format="html", numOfVersions = 1, semanticQuery = Fal
 
     # semantic query get send to the reasoning server
     if semanticQuery:
-        query = sesame.get(query.replace("SELECT source FROM CONTEXT source", ""), "recipes")
+        query = sesame.get(query.replace("SELECT source FROM CONTEXT source", ""), "elements")
         if query['status'] == 0:
             query = [q.rsplit("/", 1)[1] for q in query['stdout']]
         else:
@@ -233,10 +231,10 @@ def get(query="", user="", format="html", numOfVersions = 1, semanticQuery = Fal
 
     result = list()
     for q in query:
-        scanner = client.scannerOpenWithPrefix("Recipes", q.lower(), [ ])
+        scanner = client.scannerOpenWithPrefix("Elements", q.lower(), [ ])
         res = client.scannerGet(scanner)
         while res:
-            if (semanticQuery == False and exact == False) or res[0].row == q:
+            if ((semanticQuery == False and exact == False) or res[0].row == q) and res[0].columns['info:type'].value == 'recipe':
                 result.append(addRecipe(res[0])) 
             res = client.scannerGet(scanner)
 

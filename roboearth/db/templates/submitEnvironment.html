@@ -61,6 +61,13 @@
             <tr><td>Latitude:</td><td><input name="lat" type="text" size="10"></td>
             <td>Longitude:</td><td><input name="lng" type="text" size ="10"></td></tr>
           </table>
+          <table border="0" cellspacing="20">
+            <tr><td>
+                <ol id="file_area" style="white-space: nowrap;">
+                  <li>File ID: <input type="text" name="file_1" id="file_1" value="image" size="10"/> File: <input name="file_1" id="file_1" type="file"/></li>
+                </ol></td></tr>
+              <tr><td align="right"><input type="button" value="Add File Field" onclick="addField('file_area',10);" /></td></tr>
+          </table>
           <input type="submit" value="Insert" />
 	</form>
       </p>
