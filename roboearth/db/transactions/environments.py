@@ -26,6 +26,7 @@ import roboearth.db.transactions.hdfs_op
 from roboearth.db.transactions.external import GeoData
 import xml.dom.minidom
 import time
+import magic
 
 from thrift import Thrift
 from thrift.transport import TSocket
@@ -139,18 +140,18 @@ def update(id_, data, author):
         if data.has_key('description'):
             mutation_list.append(Mutation(column="info:description", value=data['description']))            
         if data.has_key('environment'):
-            mutation_list.append(Mutation(column="environment", value=data['environment']))            
+            mutation_list.append(Mutation(column="owl:description", value=data['environment']))            
         
-        client.mutateRow("Environments", id_,
+        client.mutateRow("Elements", id_,
                          [Mutation(column="info:modified_by", value=author)] +
                          mutation_list)
 
         if data.has_key('environment'):
-            sesame.rm(id_, "Environments")
-            sesame.set(data['environment'], id_, "Environments")
+            sesame.rm(id_, "Elements")
+            sesame.set(data['environment'], id_, "Elements")
 
         # push update to subscribers
-        scanner = client.scannerOpenWithPrefix("Environments", id_, [ ])
+        scanner = client.scannerOpenWithPrefix("Elements", id_, [ ])
         res = client.scannerGet(scanner)
         for r in res[0].columns:
             if r.startswith("subscriber:"):
@@ -159,13 +160,10 @@ def update(id_, data, author):
         client.scannerClose(scanner)
 
         roboearth.closeDBTransport(transport)
-
-        if not roboearth.local_installation:
-            roboearth.send_twitter_message("update", "Environment", id_, author)
         
         return True
     except (IOError, IllegalArgument), err:
-        raise roboearth.DBWriteErrorException("Can't write data to Action Recipe table: " + err.__str__())
+        raise roboearth.DBWriteErrorException("Can't write data to Elements table: " + err.__str__())
 
 
 def get(query="", format="html", numOfVersions = 1, user="", semanticQuery = False, exact=False):
@@ -193,7 +191,8 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery = Fal
                   "description" : row.columns['info:description'].value,
                   "author" : row.columns['info:author'].value,
                   "rating" : rating,
-                  "environments" : list()}
+                  "environments" : list(),
+                  "files" : {}}
 
         #check subscription
         if user != "" and format=="html":
@@ -206,6 +205,13 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery = Fal
 
         if row.columns.has_key('info:modified_by'):
             output['modified_by'] = row.columns['info:modified_by'].value
+            
+        for r in row.columns:
+            if r.startswith("file:"):
+                url_ = res[0].columns[r].value
+                file_ = roboearth.UPLOAD_DIR+url_[len(roboearth.BINARY_ROOT):]
+                output["files"][r[5:]] = {'url' : url_,
+                                          'mime-type' : m.from_file(file_)} 
 
         if row.columns.has_key("info:lat"):
             lat = row.columns['info:lat'].value
@@ -221,7 +227,7 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery = Fal
                                              'raw_map_data' : GeoData.getRawData(float(lat), float(lng), delta)}
 
             
-        versions = client.getVer("Elements", row.row, "owl:", numOfVersions)
+        versions = client.getVer("Elements", row.row, "owl:description", numOfVersions)
         if format=="html":
             for v in versions:
                 try:
@@ -252,9 +258,10 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery = Fal
     else:
         query = [query]
 
-    
     transport = roboearth.openDBTransport()
     client = transport['client']
+    
+    m = magic.Magic(mime=True)
 
     result = list()
     for q in query:

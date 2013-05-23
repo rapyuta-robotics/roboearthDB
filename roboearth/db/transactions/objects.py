@@ -69,8 +69,8 @@ def set(id_, class_, description, object_description, author, files=None):
 
     #create paths
     path = class_.replace(' ', '').lower().strip('.') +  '.' +id_.replace(' ', '').lower().strip('.')
-    wwwPath = roboearth.DOMAIN + os.path.join("data/", 'objects/', path.replace('.', '/'))
-    path = os.path.join(roboearth.UPLOAD_DIR, 'objects/', path.replace('.', '/'))
+    wwwPath = roboearth.DOMAIN + os.path.join("data/", 'elements/', path.replace('.', '/'))
+    path = os.path.join(roboearth.UPLOAD_DIR, 'elements/', path.replace('.', '/'))
 
     try:
         # object already exists
@@ -142,16 +142,16 @@ def update(id_, data, author):
         if data.has_key('object_description'):
             mutation_list.append(Mutation(column="owl:description", value=data['object_description']))            
         
-        client.mutateRow("Objects", id_,
+        client.mutateRow("Elements", id_,
                          [Mutation(column="info:modified_by", value=author)] +
                          mutation_list)
 
         if data.has_key('object_description'):
-            sesame.rm(id_, "Objects")
-            sesame.set(data['object_description'], id_, "objects")
+            sesame.rm(id_, "Elements")
+            sesame.set(data['object_description'], id_, "Elements")
 
         # push update to subscribers
-        scanner = client.scannerOpenWithPrefix("Objects", id_, [ ])
+        scanner = client.scannerOpenWithPrefix("Elements", id_, [ ])
         res = client.scannerGet(scanner)
         for r in res[0].columns:
             if r.startswith("subscriber:"):
@@ -161,12 +161,9 @@ def update(id_, data, author):
         client.scannerClose(scanner)
         roboearth.closeDBTransport(transport)
 
-        if not roboearth.local_installation:
-            roboearth.send_twitter_message("update", "Object", id_, author)
-
         return True
     except (IOError, IllegalArgument), err:
-        raise roboearth.DBWriteErrorException("Can't write data to Object table: " + err.__str__())
+        raise roboearth.DBWriteErrorException("Can't write data to Elements table: " + err.__str__())
 
 def get(query="", format="html", numOfVersions = 1, user="", semanticQuery=False, exact=False):
     """
@@ -278,7 +275,7 @@ def upload(request, identifier, author):
         file_ = request.FILES['file']
         type_ = request.POST['type']
 
-        upload_path = os.path.join(roboearth.UPLOAD_DIR, "objects/", identifier.replace('.', '/'))
+        upload_path = os.path.join(roboearth.UPLOAD_DIR, "elements/", identifier.replace('.', '/'))
         transport = roboearth.openDBTransport()
         client = transport['client']
 
@@ -287,7 +284,7 @@ def upload(request, identifier, author):
         # add reference to table
         client.mutateRow("Elements", identifier,
                          [Mutation(column="info:modified_by", value=author),
-                          Mutation(column="file:"+type_, value=roboearth.DOMAIN + os.path.join("data/", "objects/", identifier.replace('.', '/'), file_.name))])
+                          Mutation(column="file:"+type_, value=roboearth.DOMAIN + os.path.join("data/", "elements/", identifier.replace('.', '/'), file_.name))])
         roboearth.closeDBTransport(transport)
         return True
     except Exception, e:

@@ -66,6 +66,27 @@
               {% for i in env.fullStars %}<img src="/img/rating1.png" />{% endfor %}
               {% for i in env.emptyStars %}<img src="/img/rating0.png" />{% endfor %}
         </td></tr></table>
+        
+        {% if env.files.items %}
+        <table border="0" cellspacing="5">
+          <th>Binaries:</th>
+        {% for k,v in env.files.items %}
+        <tr><td valign="top"><a href="{{ v.url }}">{{ k }}</a></td><td>
+        {% if is_auth %}
+	<form action="/deleteBinary" method="post">{% csrf_token %}
+          <input name="table" type="hidden" value="Elements">
+          <input name="rowKey" type="hidden" value="{{ env.id }}">
+          <input name="colID" type="hidden" value="{{ k }}">
+          <input name="file" type="hidden" value="{{ v.url }}">
+          <input name="author" type="hidden" value="{{ env.author }}">
+          <input type="submit" value="Delete  &raquo;{{ k }}&laquo;">
+	</form>
+       {% endif %}
+        </td></tr>
+        {% endfor %}
+        </table>
+        {% endif %}
+
         {% if is_auth %}
 	<form action="/deleteEntity" method="post">{% csrf_token %}
           <input name="table" type="hidden" value="Elements">

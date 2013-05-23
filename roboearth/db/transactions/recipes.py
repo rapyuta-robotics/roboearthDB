@@ -103,18 +103,18 @@ def update(id_, data, author):
         if data.has_key('description'):
             mutation_list.append(Mutation(column="info:description", value=data['description']))            
         if data.has_key('recipe'):
-            mutation_list.append(Mutation(column="recipe", value=data['recipe']))            
+            mutation_list.append(Mutation(column="owl:description", value=data['recipe']))            
         
-        client.mutateRow("Recipes", id_,
+        client.mutateRow("Elements", id_,
                          [Mutation(column="info:modified_by", value=author)] +
                          mutation_list)
 
         if data.has_key('recipe'):
-            sesame.rm(id_, "Recipes")
-            sesame.set(data['recipe'], id_, "Recipes")
+            sesame.rm(id_, "Elements")
+            sesame.set(data['recipe'], id_, "Elements")
         
         # push update to subscribers
-        scanner = client.scannerOpenWithPrefix("Recipes", id_, [ ])
+        scanner = client.scannerOpenWithPrefix("Elements", id_, [ ])
         res = client.scannerGet(scanner)
         for r in res[0].columns:
             if r.startswith("subscriber:"):
@@ -124,12 +124,9 @@ def update(id_, data, author):
 
         roboearth.closeDBTransport(transport)
 
-        if not roboearth.local_installation:
-            roboearth.send_twitter_message("update", "Action Recipe", id_, author)
-
         return True
     except (IOError, IllegalArgument), err:
-        raise roboearth.DBWriteErrorException("Can't write data to Action Recipe table: " + err.__str__())
+        raise roboearth.DBWriteErrorException("Can't write data to Elements table: " + err.__str__())
 
 
 def update_rating(id_, rating):
@@ -194,7 +191,7 @@ def get(query="", user="", format="html", numOfVersions = 1, semanticQuery = Fal
         if row.columns.has_key('info:modified_by'):
             output['modified_by'] = row.columns['info:modified_by'].value
             
-        versions = client.getVer("Elements", row.row, "owl:", numOfVersions)
+        versions = client.getVer("Elements", row.row, "owl:description", numOfVersions)
         if format=="html":
             for v in versions:
                 try:
@@ -203,8 +200,9 @@ def get(query="", user="", format="html", numOfVersions = 1, semanticQuery = Fal
                 except:
                     output['recipes'].append({ 'timestamp' : time.ctime(int(v.timestamp)/1000),
                                                'recipe' : v.value})
-                output['fullStars'] = range(int(rating))
-                output['emptyStars'] = range(10 - int(rating))
+                output['fullStars'] = range(int(round(float(rating))))
+                output['emptyStars'] = range(10 - int(round(float(rating))))
+                
         else:
             for v in versions:
                     output['recipes'].append({ 'timestamp' : v.timestamp,

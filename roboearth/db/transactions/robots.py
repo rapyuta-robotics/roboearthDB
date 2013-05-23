@@ -175,12 +175,6 @@ def myRobots(user, numOfVersions = 1, exact=False):
             else:
                 output['subscribed'] = False
 
-
-        if row.columns.has_key('environment:id'):
-            output['environment'] =  row.columns['environment:id'].value
-        if row.columns.has_key('geographical:latitude'):
-            output["latitude"] = row.columns['geographical:latitude'].value
-            output["longitude"] = row.columns['geographical:longitude'].value
         return output
 
     

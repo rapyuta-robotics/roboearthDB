@@ -34,7 +34,7 @@ hdfs_op = roboearth.db.transactions.hdfs_op
 roboearth = roboearth.db.roboearth
 
 class ObjectHandler(AnonymousBaseHandler):
-   """ This class provides the methodes to handle 'GET', 'PUT', 'DELTEE' and
+   """ This class provides the methodes to handle 'GET', 'PUT', 'DELETE' and
    'POST' requests
    """
    allowed_methods = ('GET', 'PUT', 'POST', 'DELETE')
@@ -120,7 +120,7 @@ class ObjectHandler(AnonymousBaseHandler):
    def create(self, request):
       """ handle POST request to
          'http://roboearth.informatik.uni-stuttgart.de/api/0.1/object' either
-         to upload new data or to send a sematic query to the database.
+         to upload new data or to send a semantic query to the database.
 
          Upload new data:
 
@@ -157,6 +157,10 @@ class ObjectHandler(AnonymousBaseHandler):
          description = data['description']
          object_description = data['object_description']
          api_key = data['api_key']
+         #raw_files = data['files']
+         #files = {}
+         #for k,v in raw_files.items():
+         #    files[raw_files[k]] = v
          api_key = api_keys.objects.get(key__exact=api_key)
          if not User.objects.get(username__exact=api_key.username).is_active:
             raise         

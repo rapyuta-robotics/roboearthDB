@@ -6,7 +6,21 @@
     <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
     <title>Submit Environment - RoboEarth</title>
-    <SCRIPT LANGUAGE="JavaScript">
+    <script language="Javascript" type="text/javascript">
+	<!--
+	//Add more file upload fields dynamically.
+	function addField(area,limit) {
+		if(!document.getElementById) return; //Prevent older browsers from getting any further.
+		var field_area = document.getElementById(area);
+		var all_inputs = field_area.getElementsByTagName("input"); 
+		var last_item = all_inputs.length - 1;
+		var last = all_inputs[last_item].id;
+		var count = Number(last.split("_")[1]) + 1;
+		
+		if(count > limit && limit > 0) return;
+		field_area.innerHTML += "<li>File ID: <input name='file_"+(count)+"' id='file_"+(count)+"' size='10' type='text' /> File: <input name='file_"+(count)+"' id='file_"+(count)+"' type='file' /> <a style='cursor:pointer;color:blue;' onclick='this.parentNode.parentNode.removeChild(this.parentNode);'>Remove</a></li>";	
+	}
+	//-->
       function showHide(id)
       {
         var style = document.getElementById(id).style
@@ -39,7 +53,7 @@
       <h1>Submit Environment</h1>
 
       <p>
-	<form action="/environments/submit" method="post" class="commitForm">{% csrf_token %}
+	<form action="/environments/submit" enctype="multipart/form-data" method="post" class="commitForm">{% csrf_token %}
           <table border="0" cellspacing="20">
             <tr><td>Class</td><td>.</td><td>Identifier</td>
             <tr><td><input name="class" type="text" size ="30"></td>

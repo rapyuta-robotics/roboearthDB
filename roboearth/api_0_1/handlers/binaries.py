@@ -48,7 +48,7 @@ def upload(request, identifier):
         
         Content-Type: application/json which contains:
 
-        type : identfier of the file (content)
+        type : identifier of the file (content)
 
         api_key: authenticates the user
 
