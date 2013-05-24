@@ -94,7 +94,10 @@ def getSubscriptions(username):
     user = client.scannerGet(scanner)
 
     result = { }
-    result['Elements'] = list()
+    result['Robots'] = list()
+    result['Recipes'] = list()
+    result['Objects'] = list()
+    result['Environments'] = list()
     result['Users'] = list()
     while user:
         uname, table, uid = user[0].row.split('#',2)
@@ -111,11 +114,11 @@ def getSubscriptions(username):
 def subscribe(username, table, uid):
     transport = roboearth.openDBTransport()
     client = transport['client']
-    client.mutateRow(table, uid, [Mutation(column="subscriber:"+username, value=username)])
+    client.mutateRow('Elements', uid, [Mutation(column="subscriber:"+username, value=username)])
     client.mutateRow("Subscriptions", username+"#"+table+"#"+uid,
                      [Mutation(column="info:"+table, value=uid)])
     roboearth.closeDBTransport(transport)
 
 def unsubscribe(username, table, uid):
     hbase_op.delete_row(table="Subscriptions", rowKey=username+"#"+table+"#"+uid)
-    hbase_op.delete_column(table=table, rowKey=uid, column="subscriber:"+username)
+    hbase_op.delete_column(table='Elements', rowKey=uid, column="subscriber:"+username)

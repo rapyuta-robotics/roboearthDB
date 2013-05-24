@@ -60,8 +60,8 @@ def set(id_, author, description, srdl, picture):
     try:
         #create paths
         path = id_.replace(' ', '').lower().strip('.') +  '.' +id_.replace(' ', '').lower().strip('.')
-        wwwPath = roboearth.DOMAIN + os.path.join("data/", 'robots/', id_.replace(' ', '').lower().strip('.'), picture.name)
-        hdfs.upload_file(picture, os.path.join(roboearth.UPLOAD_DIR, 'robots/', id_.replace(' ', '').lower().strip('.')))
+        wwwPath = roboearth.DOMAIN + os.path.join("data/", 'elements/', id_.replace(' ', '').lower().strip('.'), picture.name)
+        hdfs.upload_file(picture, os.path.join(roboearth.UPLOAD_DIR, 'elements/', id_.replace(' ', '').lower().strip('.')))
         
         client.mutateRow("Elements", id_.lower(),
                              [Mutation(column="info:author", value=author),
@@ -159,24 +159,6 @@ def myRobots(user, numOfVersions = 1, exact=False):
     """
     get all robots from a specific user
     """
-
-    def addObject(row):
-        output = {"id" : row.row,
-                  "description" : row.columns['info:description'].value,
-                  "picture" : row.columns['info:picture'].value,
-                  "author" : row.columns['info:author'].value}
-
-        #check subscription
-        if user != "" and format=="html":
-            scannerSub = client.scannerOpenWithPrefix("Subscriptions", user+"#Robots#"+row.row, [ ])
-            subRes = client.scannerGet(scannerSub)
-            if subRes and subRes[0].row == user+"#Robots#"+row.row:
-                output['subscribed'] = True
-            else:
-                output['subscribed'] = False
-
-        return output
-
     
     transport = roboearth.openDBTransport()
     client = transport['client']
@@ -185,9 +167,12 @@ def myRobots(user, numOfVersions = 1, exact=False):
     
     res = client.scannerGet(scanner)
 
-    output = list()
+    output = []
     for r in res[0].columns:
         if r.startswith("robot:"):
             output.append(get(query=r[6:], exact=True)[0])
 
+    client.scannerClose(scanner)
+    roboearth.closeDBTransport(transport)
     return output
+    

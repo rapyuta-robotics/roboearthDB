@@ -141,14 +141,14 @@ def update_rating(id_, rating):
     transport = roboearth.openDBTransport()
     client = transport['client']
     try:
-        client.mutateRow("Recipes", id_,
-                         [Mutation(column="rating", value=str(rating))])
+        client.mutateRow("Elements", id_,
+                         [Mutation(column="info:rating", value=str(rating))])
 
         roboearth.closeDBTransport(transport)
 
         return True
     except (IOError, IllegalArgument), err:
-        raise roboearth.DBWriteErrorException("Can't update Action Reecipe rating: " + err.__str__())
+        raise roboearth.DBWriteErrorException("Can't update Action Recipe rating: " + err.__str__())
 
     
 def get(query="", user="", format="html", numOfVersions = 1, semanticQuery = False, exact=False):

@@ -5,26 +5,22 @@ a, a:link {
 
 
 html { 
-  background: #f0f0f0;
+  background: #ffffff;
   padding: 0px 0px 0px 0px;
  }
 
 body {
   font-size:14px;
+  
 }
 
 #contentArea {
-  background: #ffffff;
-  margin: -15px 0px 0px 0px;
+  
+  margin-left: auto;
+  margin-right: auto;
   padding: 1em 1em 1em 0em;
   max-width: 800px;
-  -moz-border-radius-bottomright: 25px;
-  -moz-border-radius-bottomleft: 25px;
-  border-bottom-right-radius: 25px;
-  border-bottom-left-radius: 25px;
-  box-shadow: 3px 3px 4px rgba(0,0,0,.1);
-  -webkit-box-shadow: 3px 3px 4px rgba(0,0,0,.1);
-  -moz-box-shadow: 3px 3px 4px rgba(0,0,0,.1);
+  
 }
 
 
@@ -76,58 +72,58 @@ a:hover, a:active, a:focus {
 
 #menu {
         margin-left: 2.25em;
-	font-size:14px;
-	position:absolute;	
+    font-size:14px;
+    position:absolute;  
 }
 
 #menu ul {
-	list-style-type:none;
-	list-style-image:none;
-	margin:0px;
-	padding:0px;
+    list-style-type:none;
+    list-style-image:none;
+    margin:0px;
+    padding:0px;
 }
 
 #menu li.topmenu {
-	float:left;
+    float:left;
 }
 
 .topmenu a {
-	float:left;
-	width:175px;
-	text-align:center;
+    float:left;
+    width:175px;
+    text-align:center;
 }
 
 .topmenu ul{
-	display:none;
+    display:none;
 }
 
 .topmenu a, .submenu a{
-	padding:1px 5px;
-	border:1px solid #78b6e4;
-	border-collapse:collapse;
-	color:dark-blue;
-	font-weight:bold;
-	text-decoration:none;
+    padding:1px 5px;
+    border:1px solid #78b6e4;
+    border-collapse:collapse;
+    color:dark-blue;
+    font-weight:bold;
+    text-decoration:none;
         background-color: white;
-	/*background-color:#7F4800;*/
-	margin:0;	
+    /*background-color:#7F4800;*/
+    margin:0;   
 }
 
 .submenu a{
-	font-size:12px;
-	width:175px;
-	position:relative;
-	clear:both; 
+    font-size:12px;
+    width:175px;
+    position:relative;
+    clear:both; 
 }
 
 #menu a:hover, .topmenu.on a {
-	color:white;
-	background-color:#78b6e4 !important;
+    color:white;
+    background-color:#78b6e4 !important;
 }
 
 .topmenu:hover ul {
-	display:block;	
-	z-index:500;
+    display:block;  
+    z-index:500;
 }
 
 /* end new menu */
@@ -162,8 +158,8 @@ a:hover, a:active, a:focus {
 
 /*
 #content input:hover {
-	color:white;
-	background-color:#0066cc !important;
+    color:white;
+    background-color:#0066cc !important;
 }
 */
 
@@ -322,6 +318,8 @@ z-index: 10
 {
 /*position: absolute;*/
   text-align: center;
+  margin-left: auto;
+  margin-right: auto;
   max-width: 800px;
   color:gray;
   font-size:11px;

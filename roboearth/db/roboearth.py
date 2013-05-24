@@ -158,7 +158,6 @@ def MainMenu(request):
     <ul>
     <li class="submenu"><a href="/profile">My Profile</a></li>
     <li class="submenu"><a href="/subscriptions">My Subscriptions</a></li>
-    <li class="submenu"><a href="/myrobots">My Robots</a></li>
     <li class="submenu"><a href="/newsfeed">Newsfeed</a></li>
     """
     super_user = '<li class="submenu"><a href="/accounts/manage">User Management</a></li>'

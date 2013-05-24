@@ -61,8 +61,8 @@ def set(id_, class_, description, environment, author, lat=None, lng=None, files
 
     #create paths
     path = class_.replace(' ', '').lower().strip('.') +  '.' +id_.replace(' ', '').lower().strip('.')
-    wwwPath = roboearth.DOMAIN + os.path.join("data/", 'environments/', path.replace('.', '/'))
-    path = os.path.join(roboearth.UPLOAD_DIR, 'environments/', path.replace('.', '/'))
+    wwwPath = roboearth.DOMAIN + os.path.join("data/", 'elements/', path.replace('.', '/'))
+    path = os.path.join(roboearth.UPLOAD_DIR, 'elements/', path.replace('.', '/'))
 
     if class_.lower() == "osm":
         try: # try geocoding

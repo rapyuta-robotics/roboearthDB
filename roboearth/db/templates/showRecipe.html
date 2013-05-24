@@ -38,14 +38,14 @@
             {% if is_auth %}
             {% if recipe.subscribed %}
             <form action="/unsubscribe" method="post">{% csrf_token %}
-              <input name="table" type="hidden" value="Elements">
+              <input name="table" type="hidden" value="Recipes">
               <input name="rowKey" type="hidden" value="{{ recipe.id }}">
               <input name="author" type="hidden" value="{{ recipe.author }}">
               <input type="submit" value="Unsubscribe">
             </form>
             {% else %}
             <form action="/subscribe" method="post">{% csrf_token %}
-              <input name="table" type="hidden" value="Elements">
+              <input name="table" type="hidden" value="Recipes">
               <input name="rowKey" type="hidden" value="{{ recipe.id }}">
               <input name="author" type="hidden" value="{{ recipe.author }}">
               <input type="submit" value="Subscribe">

@@ -31,6 +31,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
+import os,sys
 
 hbase = roboearth.db.transactions.hbase_op
 hdfs = roboearth.db.transactions.hdfs_op
@@ -112,17 +113,63 @@ def dbContent(request):
     except roboearth.DBException, err:
         return HttpResponse(error(request, errorType=2, errorMessage=err.__str__()))
 
+
+def removeEmptyFolders(path):
+    if not os.path.isdir(path):
+        return
+    
+    # remove empty subfolders
+    files = os.listdir(path)
+    if len(files):
+        for f in files:
+            fullpath = os.path.join(path, f)
+            if os.path.isdir(fullpath):
+                removeEmptyFolders(fullpath)
+    
+    # if folder empty, delete it
+    files = os.listdir(path)
+    if len(files) == 0:
+        os.rmdir(path)
+
+
+
 def finalDelete(request):
     """ execute delete operation after the user approved the operation
     """
-    print 'sdsad'
     try:
-        if request.POST['binary'] == "0":        
+        if request.POST['binary'] == "0":
+            transport = roboearth.openDBTransport()
+            client = transport['client']
+            scanner = client.scannerOpenWithPrefix("Elements", request.POST['rowKey'], [ ])
+            res = client.scannerGet(scanner)
+            
+            subscribers = []
+            for r in res[0].columns:
+                if r.startswith("file:") or r.startswith("info:picture"):
+                    hdfs.rm_file(res[0].columns[r].value.replace(roboearth.BINARY_ROOT, roboearth.UPLOAD_DIR))
+                if r.startswith("subscriber:"):
+                    subscribers.append(res[0].columns[r].value)
+            
+            client.scannerClose(scanner)
+            
+            for subscriber in subscribers:
+                scannersub = client.scannerOpenWithPrefix("Subscriptions", subscriber, [ ])
+                user = client.scannerGet(scannersub)
+                if user:
+                    uname, table, uid = user[0].row.split('#',2)
+                    if uid == request.POST['rowKey']:
+                        hbase.delete_row(table="Subscriptions", rowKey=uname+"#"+table+"#"+uid)        
+            client.scannerClose(scannersub)
+            
+            roboearth.closeDBTransport(transport)
+            
+            removeEmptyFolders(roboearth.UPLOAD_DIR+'/elements')
+            
             hbase.delete_row(request.POST['table'], request.POST['rowKey'])
             hbase.delete_column('Users', request.user.username, request.POST['table'].lower()[0:len(request.POST['table'])-1]+':'+request.POST['rowKey'])
+            
             return  HttpResponse(success(request))
         else:
-            print 'herher'
             hdfs.rm_file(request.POST['file'].replace(roboearth.BINARY_ROOT, roboearth.UPLOAD_DIR))
             hbase.delete_column(request.POST['table'], request.POST['rowKey'], 'file:'+request.POST['colID'])
             return  HttpResponse(success(request))
