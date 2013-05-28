@@ -115,6 +115,7 @@
 	<form action="/environments/update" method="post" class="commitForm">{% csrf_token %}
           <input name="id" type="hidden" value="{{ env.id }}">
           <table border="0" cellspacing="20">
+            <tbody>
             {% if env.location %}
             <tr><td>Latitude/Longitude: </td><td>{{env.location.latitude}} / {{env.location.longitude}}</td></tr>
             <tr><td>Map:</td><td>
@@ -123,6 +124,8 @@
             {% endif %}
             <tr><td>Description:</td><td><textarea name="description" rows="3"
             cols="60">{{ env.description }}</textarea></td></tr>
+            <tr><td><input id="button.{{ env.id }}" type="button" value="Show/Hide OWL" onclick="flip(this.id);" /></td></tr>
+            </tbody>
             <tbody class="hidden" id="owl.{{ env.id }}">
             {% for e in env.environments %}
             <tr><td>Timestamp:</td><td>{{ e.timestamp }}</td></tr>
@@ -134,9 +137,9 @@
             {% endif %}
             {% endfor %}
             </tbody>
+            
           </table>
 	</form>
-	  <input id="button.{{ env.id }}" type="button" value="Show/Hide OWL" onclick="flip(this.id);" />
       </p>
       
 

@@ -96,12 +96,15 @@
 	  </form>
         {% endif %}	
 		<table border="0" cellspacing="20">
+		<tbody>
         <tr><td>Description:</td><td><textarea name="description" rows="3" cols="60">{{ robot.description }}</textarea></td></tr>
+        <tr><td><input id="button.{{ robot.id }}" type="button" value="Show/Hide OWL" onclick="flip(this.id);" /></td></tr>
+        </tbody>
         <tbody class="hidden" id="owl.{{ robot.id }}">
         <tr><td>Semantic Robot Description (SRDL):</td><td><textarea name="srdl" rows="8" cols="60">{{ robot.srdl }}</textarea></td></tr>
         </tbody>
         </table>
-		<input id="button.{{ robot.id }}" type="button" value="Show/Hide OWL" onclick="flip(this.id);" />
+		
       {% endfor %}
       
       {% else %}

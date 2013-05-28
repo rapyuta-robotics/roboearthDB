@@ -91,8 +91,11 @@
 	<form action="/recipes/update" method="post" class="commitForm">{% csrf_token %}
           <input name="id" type="hidden" value="{{ recipe.id }}">
           <table border="0" cellspacing="20">
+          	<tbody>
             <tr><td>Description:</td><td><textarea name="description" rows="3"
             cols="60">{{ recipe.description }}</textarea></td></tr>
+            <tr><td><input id="button.{{ recipe.id }}" type="button" value="Show/Hide OWL" onclick="flip(this.id);" /></td></tr>
+            </tbody>
             <tbody class="hidden" id="owl.{{ recipe.id }}">
             {% for rec in recipe.recipes %}
             <tr><td>Timestamp:</td><td>{{ rec.timestamp }}</td></tr>
@@ -106,7 +109,6 @@
             </tbody>
           </table>
 	</form>
-	<input id="button.{{ recipe.id }}" type="button" value="Show/Hide OWL" onclick="flip(this.id);" />
       </p>
       {% endfor %}
       
