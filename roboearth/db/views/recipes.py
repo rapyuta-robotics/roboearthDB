@@ -24,12 +24,15 @@ import roboearth.db.views.views
 import roboearth.db.transactions.recipes
 import roboearth.db.transactions.sesame
 import xml.dom.minidom
+import urllib2
 from django.http import HttpResponse
 from django.template import Context, loader
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 sesame = roboearth.db.transactions.sesame
 transaction = roboearth.db.transactions.recipes
@@ -131,7 +134,19 @@ def request(request):
             else:
                 exact = False
 
-            return output(transaction.get(query=query, semanticQuery=semantic,numOfVersions=5, user=username, exact=exact), query, semantic)
+            recipes_list = transaction.get(query=query, semanticQuery=semantic, user=username, exact=exact)
+            paginator = Paginator(recipes_list, 10)
+            page = request.GET.get('page')
+            try:
+                recipes = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                recipes = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                recipes = paginator.page(paginator.num_pages)
+            return output(recipes, urllib2.quote(query.encode("utf8")), semantic)
+
         else:
             return requestForm(request)
     except roboearth.DBReadErrorException, err:

@@ -126,6 +126,29 @@
       <p class="center"><b>No search results!</b></p>
       {% endif %}
     </div>
+    <div class="pagination">
+	    <span class="step-links">
+	        {% if Environments.has_previous %}
+	        	{% if Semantic %}
+	        		<a href="?page={{ Environments.previous_page_number }}&semanticQuery={{ Query }}">previous</a>
+	            {% else %}
+	            	<a href="?page={{ Environments.previous_page_number }}&query={{ Query }}">previous</a>
+	            {% endif %}
+	        {% endif %}
+	
+	        <span class="current">
+	            Page {{ Environments.number }} of {{ Environments.paginator.num_pages }}.
+	        </span>
+	
+	        {% if Environments.has_next %}
+		        {% if Semantic %}
+		            <a href="?page={{ Environments.next_page_number }}&semanticQuery={{ Query }}">next</a>
+		        {% else %}
+		        	<a href="?page={{ Environments.next_page_number }}&query={{ Query }}">next</a>
+		        {% endif %}
+	        {% endif %}
+	    </span>
+	</div>
     </div>
     <div id="footer">
       {{ Footer|safe }}

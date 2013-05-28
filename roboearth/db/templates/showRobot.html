@@ -91,6 +91,21 @@
       {% endif %}
       {% endif %}
     </div>
+        <div class="pagination">
+	    <span class="step-links">
+	        {% if Robots.has_previous %}
+	        	<a href="?page={{ Robots.previous_page_number }}&query={{ Query }}">previous</a>
+	        {% endif %}
+	
+	        <span class="current">
+	            Page {{ Robots.number }} of {{ Robots.paginator.num_pages }}.
+	        </span>
+	
+	        {% if Robots.has_next %}
+		        <a href="?page={{ Robots.next_page_number }}&query={{ Query }}">next</a>
+	        {% endif %}
+	    </span>
+	</div>
     </div>
     <div id="footer">
       {{ Footer|safe }}

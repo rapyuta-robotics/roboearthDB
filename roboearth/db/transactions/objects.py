@@ -234,7 +234,7 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery=False
 
     # semantic query get send to the reasoning server
     if semanticQuery:
-        query = sesame.get(query.replace("SELECT source FROM CONTEXT source", ""), "objects")
+        query = sesame.get(query.replace("SELECT source FROM CONTEXT source", ""), "elements")
         if query['status'] == 0:
             query = [q.rsplit("/", 1)[1] for q in query['stdout']]
         else:

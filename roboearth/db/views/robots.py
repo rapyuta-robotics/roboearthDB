@@ -30,7 +30,7 @@ from django.template import Context, loader
 from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 transaction = roboearth.db.transactions.robots
 hbase_op = roboearth.db.transactions.hbase_op
 forms = roboearth.db.forms
@@ -104,7 +104,18 @@ def request(request):
             exact = False
 
         query = request.GET['query']
-        return output(transaction.get(query=query, user=username, exact=exact), query)
+        robots_list = transaction.get(query=query, user=username, exact=exact)
+        paginator = Paginator(robots_list, 10)
+        page = request.GET.get('page')
+        try:
+            robots = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            robots = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            robots = paginator.page(paginator.num_pages)
+        return output(robots, query)
     else:
         requestForm(request)
 

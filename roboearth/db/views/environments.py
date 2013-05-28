@@ -24,6 +24,7 @@ import roboearth.db.views.views
 import roboearth.db.transactions.environments
 import xml.dom.minidom
 import os
+import urllib2
 from django.http import HttpResponse
 from django.template import Context, loader
 import roboearth.db.transactions.hdfs_op
@@ -31,6 +32,7 @@ from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 hdfs_op = roboearth.db.transactions.hdfs_op
@@ -152,8 +154,18 @@ def request(request):
                 exact = True
             else:
                 exact = False
-
-            return output(transaction.get(query=query, semanticQuery=semantic, user=username, exact=exact), query, semantic)
+            environments_list = transaction.get(query=query, semanticQuery=semantic, user=username, exact=exact)
+            paginator = Paginator(environments_list, 10)
+            page = request.GET.get('page')
+            try:
+                environments = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                environments = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                environments = paginator.page(paginator.num_pages)
+            return output(environments, urllib2.quote(query.encode("utf8")), semantic)
         else:
             return requestForm(request)
     except roboearth.DBReadErrorException, err:
