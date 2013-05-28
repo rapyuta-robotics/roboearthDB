@@ -6,6 +6,23 @@
     <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
     <title>Search Result - RoboEarth</title>
+    <style type="text/css">
+		#hidden {display: none;}
+		#visible {display: block;}
+	</style>
+    <script type="text/javascript">
+    	function flip(id)
+    	{
+    		var id = id.slice(7);
+    		var owl = "owl." + id;
+    		
+    		if (document.getElementById(owl).className == "hidden")
+    		{
+    			document.getElementById(owl).className = "visible";
+    		}
+    		else document.getElementById(owl).className = "hidden";
+    	}
+    </script>
   </head>
 
   <body>
@@ -98,18 +115,21 @@
           <table border="0" cellspacing="20">
             <tr><td>Description:</td><td><textarea name="description" rows="3"
             cols="60">{{ obj.description }}</textarea></td></tr>
+            <tbody class="hidden" id="owl.{{ obj.id }}">
             {% for o in obj.object_description %}
             <tr><td>Timestamp:</td><td>{{ o.timestamp }}</td></tr>
-            <tr><td>Object Description:</td><td><textarea name="object_description" rows="30"
+            <tr><td>Object Description:</td><td><textarea rows="30"
             cols="60" {% if forloop.counter != 1 %}readonly{% endif %}>{{ o.description }}</textarea><br/>(OWL
             description)</td></tr>
             {% if forloop.counter == 1 %}
             <tr><td></td><td><input type="submit" value="Update" /></td></tr>
             {% endif %}
             {% endfor %}
+            </tbody>
           </table>
 	</form>
-      </p>
+	<input id="button.{{ obj.id }}" type="button" value="Show/Hide OWL" onclick="flip(this.id);" />
+    </p>
 
       
 

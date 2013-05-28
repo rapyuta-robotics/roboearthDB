@@ -7,6 +7,23 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     
     <title>Search Results - RoboEarth</title>
+    <style type="text/css">
+		#hidden {display: none;}
+		#visible {display: block;}
+	</style>
+    <script type="text/javascript">
+    	function flip(id)
+    	{
+    		var id = id.slice(7);
+    		var owl = "owl." + id;
+    		
+    		if (document.getElementById(owl).className == "hidden")
+    		{
+    			document.getElementById(owl).className = "visible";
+    		}
+    		else document.getElementById(owl).className = "hidden";
+    	}
+    </script>    
   </head>
 
   <body>
@@ -80,9 +97,11 @@
         {% endif %}	
 		<table border="0" cellspacing="20">
         <tr><td>Description:</td><td><textarea name="description" rows="3" cols="60">{{ robot.description }}</textarea></td></tr>
+        <tbody class="hidden" id="owl.{{ robot.id }}">
         <tr><td>Semantic Robot Description (SRDL):</td><td><textarea name="srdl" rows="8" cols="60">{{ robot.srdl }}</textarea></td></tr>
+        </tbody>
         </table>
-
+		<input id="button.{{ robot.id }}" type="button" value="Show/Hide OWL" onclick="flip(this.id);" />
       {% endfor %}
       
       {% else %}

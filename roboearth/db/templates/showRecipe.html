@@ -4,7 +4,25 @@
     <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
     <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>Search Results - RoboEarth</title>
+    <style type="text/css">
+		#hidden {display: none;}
+		#visible {display: block;}
+	</style>
+    <script type="text/javascript">
+    	function flip(id)
+    	{
+    		var id = id.slice(7);
+    		var owl = "owl." + id;
+    		
+    		if (document.getElementById(owl).className == "hidden")
+    		{
+    			document.getElementById(owl).className = "visible";
+    		}
+    		else document.getElementById(owl).className = "hidden";
+    	}
+    </script>    
   </head>
   <body>
 
@@ -75,6 +93,7 @@
           <table border="0" cellspacing="20">
             <tr><td>Description:</td><td><textarea name="description" rows="3"
             cols="60">{{ recipe.description }}</textarea></td></tr>
+            <tbody class="hidden" id="owl.{{ recipe.id }}">
             {% for rec in recipe.recipes %}
             <tr><td>Timestamp:</td><td>{{ rec.timestamp }}</td></tr>
             <tr><td>Recipe:</td><td><textarea name="recipe" rows="30"
@@ -84,11 +103,13 @@
             <tr><td></td><td><input type="submit" value="Update" /></td></tr>
             {% endif %}
             {% endfor %}
+            </tbody>
           </table>
 	</form>
+	<input id="button.{{ recipe.id }}" type="button" value="Show/Hide OWL" onclick="flip(this.id);" />
       </p>
       {% endfor %}
-      <br /><br /><br />
+      
 
       {% else %}
       <p class="center"><b>No search results!</b></p>
