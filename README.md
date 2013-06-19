@@ -14,3 +14,4 @@ Installation
 7. Correct variables in roboearth.py, roboearth.sh and stop-roboearth.sh
 8. Run createTables.py to create necessary tables in Hbase
 9. Now, you can start the server by running roboearth.sh and stop it by stop-roboearth.sh 
+10. The user database contains a dummy user called 'test' to login with password '123456'
