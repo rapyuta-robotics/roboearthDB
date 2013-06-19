@@ -32,7 +32,7 @@ hbase_op = roboearth.db.transactions.hbase_op
 roboearth = roboearth.db.roboearth
 
 class EnvironmentHandler(AnonymousBaseHandler):
-   """ This class provides the methodes to handle 'GET', 'PUT', 'DELTEE' and
+   """ This class provides the methods to handle 'GET', 'PUT', 'DELETE' and
    'POST' requests
    """
    allowed_methods = ('GET', 'PUT', 'DELETE', 'POST')

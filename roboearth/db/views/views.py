@@ -159,7 +159,7 @@ def finalDelete(request):
                     uname, table, uid = user[0].row.split('#',2)
                     if uid == request.POST['rowKey']:
                         hbase.delete_row(table="Subscriptions", rowKey=uname+"#"+table+"#"+uid)        
-            client.scannerClose(scannersub)
+                client.scannerClose(scannersub)
             
             roboearth.closeDBTransport(transport)
             

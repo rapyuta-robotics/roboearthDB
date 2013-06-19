@@ -218,7 +218,7 @@ def get(query="", format="html", numOfVersions = 1, user="", semanticQuery=False
                     output['object_description'].append({ 'timestamp' : time.ctime(int(v.timestamp)/1000),
                                                           'description' : xml.dom.minidom.parseString(v.value).toprettyxml(indent="    ") })
                 except:
-                    output['object_description'].append({ 'timestamp' : time.ctime(int(i.timestamp)/1000),
+                    output['object_description'].append({ 'timestamp' : time.ctime(int(v.timestamp)/1000),
                                                           'description' : v.value })
                 output['fullStars'] = range(int(round(float(rating))))
                 output['emptyStars'] = range(10 - int(round(float(rating))))
