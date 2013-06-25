@@ -40,7 +40,7 @@ environment_handler = CsrfExemptResource(EnvironmentHandler)
 robot_handler = CsrfExemptResource(RobotHandler)
 
 urlpatterns = patterns('',
-    url(r'^binary/(?P<identifier>[^/]+)$', 'roboearth.api_0_1.handlers.binaries.upload'),
+    url(r'^binary/objects/(?P<identifier>[^/]+)$', 'roboearth.api_0_1.handlers.binaries.upload'),
     url(r'^recipe/(?P<recipe_id>[^/]+)$', recipe_handler),
     url(r'^recipe/(?P<recipe_id>[^/]+)/(?P<api_key>[^/]+)$', recipe_handler),
     url(r'^recipe/(?P<recipe_id>[^/]+)/(?P<api_key>[^/]+)/(?P<rating>[^/]+)$', recipe_handler),
