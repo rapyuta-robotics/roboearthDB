@@ -23,3 +23,7 @@ Installation
 Using the AMI
 ===========
 1. If you are using the AMI, you should start from point 13 of the previous list of instructions
+
+FAQ
+==========
+1. If you get "could not connect to 'thrift server ip'" (which is mostly on port 9090), Wait sometime. If you still get the error, try restarting roboearth.
