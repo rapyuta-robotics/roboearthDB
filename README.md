@@ -17,5 +17,9 @@ Installation
 10. Correct variables in roboearth.py, roboearth.sh and stop-roboearth.sh, settings.py
 11. Also correct url for static documents in urls.py (The fuse mountpoint)
 12. Run createTables.py to create necessary tables in Hbase (You need hbase, hadoop and thrift server running)
-13. Now, you can start the server by running roboearth.sh and stop it by stop-roboearth.sh 
+13. Now, you can start the server by running start-roboearth.sh and stop it by stop-roboearth.sh 
 14. The user database contains a dummy user called 'test' to login with password '123456'
+
+Using the AMI
+===========
+1. If you are using the AMI, you should start from point 13 of the previous list of instructions
