@@ -27,3 +27,4 @@ Using the AMI
 FAQ
 ==========
 1. If you get "could not connect to 'thrift server ip'" (which is mostly on port 9090), Wait sometime. If you still get the error, try restarting roboearth.
+2. If it takes ages to stop hbase while running stop-roboearth.sh, try pressing Ctrl+C and try again. 
