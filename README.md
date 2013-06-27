@@ -28,3 +28,6 @@ FAQ
 ==========
 1. If you get "could not connect to 'thrift server ip'" (which is mostly on port 9090), Wait sometime. If you still get the error, try restarting roboearth.
 2. If it takes ages to stop hbase while running stop-roboearth.sh, try pressing Ctrl+C and try again. 
+3. If you reboot an instance, roboearth may not work on the first attempt due to change in ip. Start roboearth and check <ip of instance>:60010 to see if hbase is running.
+If it's not, restart roboearth and wait for sometime for hbase to start. Keep checking logs at hbase/logs/(master log file). 
+
