@@ -6,11 +6,11 @@ This is a fork of the Roboearth Hadoop Database.
 Installation
 ===========
 1. Clone this repository
-2. Install [Hadoop] (http://hadoop.apache.org/docs/stable/single_node_setup.html) 
+2. Install [Hadoop] (https://hadoop.apache.org/docs/r1.2.1/single_node_setup.html) 
 3. Install [Hbase] (http://hbase.apache.org/book/quickstart.html)
 4. Install [HDFS-Fuse] (https://github.com/IDSCETHZurich/roboearthDB/wiki/Install-hdfs-fuse) on hadoop
 5. Install Apache [Tomcat]( http://tomcat.apache.org/tomcat-7.0-doc/setup.html)
-6. Install [Sesame] (http://www.openrdf.org/doc/sesame2/users/) on Tomcat 
+6. Install [Sesame] (http://openrdf.callimachus.net/sesame/2.7/docs/users.docbook?view) on Tomcat 
 7. Make sure to create a user for login for tomcat server apps
 8. Now login to tomcat and browse to sesame-workbench
 9. Add a table called 'elements'
